@@ -1,24 +1,85 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { AdminPanel } from "@/components/admin-panel";
+import { PostCard } from "@/components/post-card";
+import { useBlog } from "@/lib/blog-store";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
-  component: Index,
+  head: () => ({
+    meta: [
+      { title: "Tenaosis — Quiet living in a loud digital world" },
+      {
+        name: "description",
+        content:
+          "Essays on attention, silence and natural rhythms. Tenaosis is a slow journal for people learning to live gently with technology.",
+      },
+      { property: "og:title", content: "Tenaosis — Quiet living in a loud digital world" },
+      {
+        property: "og:description",
+        content: "Essays on attention, silence and natural rhythms for a calmer digital life.",
+      },
+    ],
+  }),
+  component: Home,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+function Home() {
+  const { publishedPosts, featuredPost } = useBlog();
+  const rest = publishedPosts.filter((p) => p.id !== featuredPost?.id);
+
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+    <div className="mx-auto max-w-5xl px-5 py-8 sm:py-12">
+      <AdminPanel />
+
+      <section className="mx-auto max-w-2xl text-center">
+        <p className="text-sm leading-relaxed text-foreground/80">
+          Technology isn't the villain — it's a lack of boundaries. When we prioritise the digital
+          over the biological, we stop living and start becoming mechanical. Natural living is messy,
+          slow and tactile; tech is clean, fast and sterile. In the balance between the two, you find
+          healthy living.
+        </p>
+      </section>
+
+      {featuredPost && (
+        <section className="mt-12 border-t border-border pt-8">
+          <span className="label-caps text-muted-foreground">Featured</span>
+          <h1 className="mt-2 text-3xl sm:text-5xl">{featuredPost.title}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">{featuredPost.excerpt}</p>
+          <img
+            src={featuredPost.image}
+            alt={featuredPost.title}
+            width={1280}
+            height={860}
+            className="mt-5 aspect-[16/10] w-full object-cover"
+          />
+          <div className="mx-auto mt-6 max-w-2xl prose-editorial text-[0.95rem] text-foreground/90">
+            {featuredPost.body.slice(0, 4).map((para, i) => (
+              <p key={i}>{para}</p>
+            ))}
+          </div>
+          <Link to="/blog/$slug" params={{ slug: featuredPost.slug }} className="pill mt-2">
+            Continue reading →
+          </Link>
+        </section>
+      )}
+
+      <section className="mt-14 border-t border-border pt-8">
+        <h2 className="text-2xl">More from the journal</h2>
+        <div className="mt-6 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+          {rest.map((post) => (
+            <PostCard key={post.id} post={post} />
+          ))}
+        </div>
+      </section>
+
+      <section className="mt-14 border-t border-border pt-8 text-center">
+        <h2 className="text-2xl">Join us</h2>
+        <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
+          A recurring reminder that the world outside the screen is still waiting for you.
+        </p>
+        <Link to="/newsletter" className="pill mt-4">
+          Subscribe →
+        </Link>
+      </section>
     </div>
   );
 }
