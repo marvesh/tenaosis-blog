@@ -11,6 +11,9 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { SiteFooter, SiteHeader } from "@/components/site-chrome";
+import { AdminProvider } from "@/lib/admin-context";
+import { BlogProvider } from "@/lib/blog-store";
 
 function NotFoundComponent() {
   return (
