@@ -32,7 +32,7 @@ function Newsletter() {
 
   return (
     <div className="mx-auto max-w-2xl px-5 py-8 sm:py-12">
-      <h1 className="text-3xl sm:text-4xl">Join us</h1>
+      <h1 className="text-3xl sm:text-4xl">Join the Tenaosis Letter</h1>
       <img
         src={newsletterImage}
         alt="A woman reading a book in a sunlit garden"

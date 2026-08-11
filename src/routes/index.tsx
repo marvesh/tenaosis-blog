@@ -33,7 +33,8 @@ function Home() {
       <AdminPanel />
 
       <section className="mx-auto max-w-2xl text-center">
-        <p className="text-sm leading-relaxed text-foreground/80">
+        <h1 className="text-3xl sm:text-4xl">Quiet living in a loud digital world</h1>
+        <p className="mt-4 text-sm leading-relaxed text-foreground/80">
           Technology isn't the villain — it's a lack of boundaries. When we prioritise the digital
           over the biological, we stop living and start becoming mechanical. Natural living is messy,
           slow and tactile; tech is clean, fast and sterile. In the balance between the two, you find
@@ -44,7 +45,7 @@ function Home() {
       {featuredPost && (
         <section className="mt-12 border-t border-border pt-8">
           <span className="label-caps text-muted-foreground">Featured</span>
-          <h1 className="mt-2 text-3xl sm:text-5xl">{featuredPost.title}</h1>
+          <h2 className="mt-2 text-3xl sm:text-5xl">{featuredPost.title}</h2>
           <p className="mt-1 text-sm text-muted-foreground">{featuredPost.excerpt}</p>
           <img
             src={featuredPost.image}
