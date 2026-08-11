@@ -15,7 +15,9 @@ export const Route = createFileRoute("/about")({
         property: "og:description",
         content: "A quiet return to what is real, where modern life meets natural living.",
       },
+      { property: "og:url", content: "https://cozy-cms-corner-67.lovable.app/about" },
     ],
+    links: [{ rel: "canonical", href: "https://cozy-cms-corner-67.lovable.app/about" }],
   }),
   component: About,
 });

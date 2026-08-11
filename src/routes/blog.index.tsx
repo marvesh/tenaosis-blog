@@ -17,7 +17,9 @@ export const Route = createFileRoute("/blog/")({
         property: "og:description",
         content: "Every Tenaosis essay on attention, silence and digital boundaries.",
       },
+      { property: "og:url", content: "https://cozy-cms-corner-67.lovable.app/blog" },
     ],
+    links: [{ rel: "canonical", href: "https://cozy-cms-corner-67.lovable.app/blog" }],
   }),
   component: BlogIndex,
 });

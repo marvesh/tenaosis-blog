@@ -1,19 +1,56 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PostCard } from "@/components/post-card";
 import { useBlog } from "@/lib/blog-store";
+import { demoPosts } from "@/data/posts";
+
+const BASE_URL = "https://cozy-cms-corner-67.lovable.app";
+
+const titleCase = (slug: string) =>
+  slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 
 export const Route = createFileRoute("/blog/$slug")({
-  head: ({ params }) => ({
-    meta: [
-      { title: `${params.slug.replace(/-/g, " ")} — Tenaosis` },
-      { name: "description", content: "An essay from the Tenaosis journal on living gently with technology." },
-      { property: "og:title", content: `${params.slug.replace(/-/g, " ")} — Tenaosis` },
-      {
-        property: "og:description",
-        content: "An essay from the Tenaosis journal on living gently with technology.",
-      },
-    ],
-  }),
+  head: ({ params }) => {
+    const post = demoPosts.find((p) => p.slug === params.slug);
+    const url = `${BASE_URL}/blog/${params.slug}`;
+    const title = post?.title ?? titleCase(params.slug);
+    const description =
+      post?.excerpt ?? "An essay from the Tenaosis journal on living gently with technology.";
+    const image = post?.image ? `${BASE_URL}${post.image}` : undefined;
+
+    return {
+      meta: [
+        { title: `${title} — Tenaosis` },
+        { name: "description", content: description },
+        { property: "og:title", content: `${title} — Tenaosis` },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "article" },
+        { property: "og:url", content: url },
+        ...(image
+          ? [
+              { property: "og:image", content: image },
+              { name: "twitter:image", content: image },
+            ]
+          : []),
+      ],
+      links: [{ rel: "canonical", href: url }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Article",
+            headline: title,
+            description,
+            ...(image ? { image } : {}),
+            ...(post?.date ? { datePublished: new Date(post.date).toISOString() } : {}),
+            mainEntityOfPage: url,
+            author: { "@type": "Organization", name: "Tenaosis" },
+            publisher: { "@type": "Organization", name: "Tenaosis" },
+          }),
+        },
+      ],
+    };
+  },
   component: Article,
 });
 

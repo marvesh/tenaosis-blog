@@ -104,6 +104,35 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
     ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify([
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            name: "Tenaosis",
+            url: "https://cozy-cms-corner-67.lovable.app",
+            description:
+              "Essays on attention, silence and natural rhythms in a loud digital world.",
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: "Tenaosis",
+            url: "https://cozy-cms-corner-67.lovable.app",
+            email: "hello@tenaosis.com",
+            contactPoint: [
+              {
+                "@type": "ContactPoint",
+                contactType: "customer support",
+                email: "hello@tenaosis.com",
+              },
+            ],
+          },
+        ]),
+      },
+    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,
