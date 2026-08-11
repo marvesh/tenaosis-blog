@@ -1,14 +1,18 @@
-# Welcome to your Lovable project
+# Homefront Admin Blog
+
+ok I want to build this blog front-end, but it has to be responsive on mobile too. it has to be built with nextjs and then this blog has to have admin features on the home page.  the admin has to have featured the users cannot access but on the home page.
 
 This project was built with [Lovable](https://lovable.dev).
 
+**Live app**: https://tenaosis-blog.lovable.app
+
 ## Build with Lovable
 
-Open your project in the [Lovable editor](https://lovable.dev) and keep building.
+Continue developing this project in the [Lovable editor](https://lovable.dev/projects/ae3f5ef4-a520-4ec3-8385-4f2eecdf7a92).
 
 - **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
-- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
+- **Stay in sync**: every change made in Lovable is committed straight to this repository.
+- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
 
 ## Development
 
@@ -20,10 +24,3 @@ cd <repository-name>
 npm i
 npm run dev
 ```
-
-## Built with
-
-- TanStack Start
-- TypeScript
-- React
-- Tailwind CSS
