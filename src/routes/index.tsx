@@ -17,7 +17,9 @@ export const Route = createFileRoute("/")({
         property: "og:description",
         content: "Essays on attention, silence and natural rhythms for a calmer digital life.",
       },
+      { property: "og:url", content: "https://cozy-cms-corner-67.lovable.app/" },
     ],
+    links: [{ rel: "canonical", href: "https://cozy-cms-corner-67.lovable.app/" }],
   }),
   component: Home,
 });

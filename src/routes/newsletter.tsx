@@ -7,18 +7,20 @@ import { useBlog } from "@/lib/blog-store";
 export const Route = createFileRoute("/newsletter")({
   head: () => ({
     meta: [
-      { title: "Join Us — The Tenaosis Letter" },
+      { title: "Join the Tenaosis Letter — Weekly quiet-living notes" },
       {
         name: "description",
         content:
           "A recurring reminder that the world outside your screen is still waiting. Join the Tenaosis letter.",
       },
-      { property: "og:title", content: "Join Us — The Tenaosis Letter" },
+      { property: "og:title", content: "Join the Tenaosis Letter" },
       {
         property: "og:description",
         content: "A recurring reminder that the world outside your screen is still waiting.",
       },
+      { property: "og:url", content: "https://cozy-cms-corner-67.lovable.app/newsletter" },
     ],
+    links: [{ rel: "canonical", href: "https://cozy-cms-corner-67.lovable.app/newsletter" }],
   }),
   component: Newsletter,
 });
