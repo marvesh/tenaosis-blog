@@ -39,7 +39,7 @@ function Newsletter() {
         loading="lazy"
         width={1280}
         height={900}
-        className="mt-5 aspect-[16/10] w-full object-cover"
+        className="mt-5 aspect-[16/10] w-full rounded-2xl object-cover"
       />
       <div className="mt-6 space-y-4 text-[0.95rem] text-foreground/90">
         <p>
@@ -69,11 +69,11 @@ function Newsletter() {
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Your email address"
           aria-label="Your email address"
-          className="min-w-0 border border-input bg-background px-3 py-2 text-sm outline-none focus:border-primary"
+          className="input-soft min-w-0"
         />
         <button
           type="submit"
-          className="grid shrink-0 place-items-center bg-primary px-4 text-primary-foreground"
+          className="grid shrink-0 place-items-center rounded-full bg-primary px-5 text-primary-foreground"
           aria-label="Subscribe"
         >
           <ArrowRight size={16} />

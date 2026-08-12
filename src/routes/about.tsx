@@ -32,7 +32,7 @@ function About() {
         loading="lazy"
         width={1280}
         height={900}
-        className="mt-5 aspect-[16/10] w-full object-cover"
+        className="mt-5 aspect-[16/10] w-full rounded-2xl object-cover"
       />
       <div className="mt-6 space-y-4 text-[0.95rem] text-foreground/90">
         <p>

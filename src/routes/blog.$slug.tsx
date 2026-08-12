@@ -85,7 +85,7 @@ function Article() {
             alt={post.title}
             width={1280}
             height={860}
-            className="mt-5 aspect-[16/10] w-full object-cover"
+            className="mt-5 aspect-[16/10] w-full rounded-2xl object-cover"
           />
         )}
         <div className="prose-editorial mt-6 text-[0.95rem] text-foreground/90">
