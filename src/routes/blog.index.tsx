@@ -41,9 +41,9 @@ function BlogIndex() {
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search with keywords"
           aria-label="Search articles"
-          className="min-w-0 border border-input bg-background px-3 py-2 text-sm outline-none focus:border-primary"
+          className="input-soft min-w-0"
         />
-        <span className="grid shrink-0 place-items-center bg-primary px-3 text-primary-foreground">
+        <span className="grid shrink-0 place-items-center rounded-full bg-primary px-4 text-primary-foreground">
           <Search size={15} />
         </span>
       </div>

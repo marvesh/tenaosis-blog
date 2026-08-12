@@ -27,8 +27,8 @@ function AdminGate() {
       <h1 className="text-3xl">Editor access</h1>
       <p className="mt-2 text-sm text-muted-foreground">
         {isAdmin
-          ? "You're already signed in. Admin tools appear at the top of the home page."
-          : "Enter the shared editor password to unlock admin tools on the home page."}
+          ? "You're already signed in. Head to your dashboard."
+          : "Enter the shared editor password to open your dashboard."}
       </p>
       <form
         onSubmit={async (e) => {
@@ -37,7 +37,7 @@ function AdminGate() {
           const ok = await signIn(password);
           setBusy(false);
           setPassword("");
-          if (ok) void navigate({ to: "/" });
+          if (ok) void navigate({ to: "/dashboard" });
           else setError(true);
         }}
         className="mt-6 space-y-3"
@@ -52,7 +52,7 @@ function AdminGate() {
           }}
           placeholder="Password"
           aria-label="Editor password"
-          className="w-full border border-input bg-background px-3 py-2 text-sm outline-none focus:border-primary"
+          className="input-soft"
         />
         <button type="submit" disabled={busy} className="pill disabled:opacity-60">
           {busy ? "Checking…" : "Unlock"}

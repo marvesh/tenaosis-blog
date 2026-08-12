@@ -85,8 +85,13 @@ function Article() {
             alt={post.title}
             width={1280}
             height={860}
-            className="mt-5 aspect-[16/10] w-full object-cover"
+            className="mt-5 aspect-[16/10] w-full rounded-2xl object-cover"
           />
+        )}
+        {post.quote && (
+          <blockquote className="mt-6 rounded-2xl border-l-4 border-primary bg-secondary/60 px-5 py-4 font-display text-xl text-primary">
+            {post.quote}
+          </blockquote>
         )}
         <div className="prose-editorial mt-6 text-[0.95rem] text-foreground/90">
           {post.body.map((para, i) => (

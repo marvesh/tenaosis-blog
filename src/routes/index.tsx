@@ -1,5 +1,4 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { AdminPanel } from "@/components/admin-panel";
 import { PostCard } from "@/components/post-card";
 import { useBlog } from "@/lib/blog-store";
 
@@ -30,8 +29,6 @@ function Home() {
 
   return (
     <div className="mx-auto max-w-5xl px-5 py-8 sm:py-12">
-      <AdminPanel />
-
       <section className="mx-auto max-w-2xl text-center">
         <h1 className="text-3xl sm:text-4xl">Quiet living in a loud digital world</h1>
         <p className="mt-4 text-sm leading-relaxed text-foreground/80">
@@ -52,7 +49,7 @@ function Home() {
             alt={featuredPost.title}
             width={1280}
             height={860}
-            className="mt-5 aspect-[16/10] w-full object-cover"
+            className="mt-5 aspect-[16/10] w-full rounded-2xl object-cover"
           />
           <div className="mx-auto mt-6 max-w-2xl prose-editorial text-[0.95rem] text-foreground/90">
             {featuredPost.body.slice(0, 4).map((para, i) => (
