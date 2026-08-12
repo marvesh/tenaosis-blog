@@ -112,7 +112,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
             "@context": "https://schema.org",
             "@type": "WebSite",
             name: "Tenaosis",
-            url: "https://cozy-cms-corner-67.lovable.app",
+            url: "https://tenaosis-blog.lovable.app",
             description:
               "Essays on attention, silence and natural rhythms in a loud digital world.",
           },
@@ -120,7 +120,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
             "@context": "https://schema.org",
             "@type": "Organization",
             name: "Tenaosis",
-            url: "https://cozy-cms-corner-67.lovable.app",
+            url: "https://tenaosis-blog.lovable.app",
             email: "hello@tenaosis.com",
             contactPoint: [
               {

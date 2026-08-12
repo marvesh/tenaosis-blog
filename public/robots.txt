@@ -13,5 +13,5 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://cozy-cms-corner-67.lovable.app/sitemap.xml
+Sitemap: https://tenaosis-blog.lovable.app/sitemap.xml
 

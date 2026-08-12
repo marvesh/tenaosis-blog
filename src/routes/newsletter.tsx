@@ -18,9 +18,9 @@ export const Route = createFileRoute("/newsletter")({
         property: "og:description",
         content: "A recurring reminder that the world outside your screen is still waiting.",
       },
-      { property: "og:url", content: "https://cozy-cms-corner-67.lovable.app/newsletter" },
+      { property: "og:url", content: "https://tenaosis-blog.lovable.app/newsletter" },
     ],
-    links: [{ rel: "canonical", href: "https://cozy-cms-corner-67.lovable.app/newsletter" }],
+    links: [{ rel: "canonical", href: "https://tenaosis-blog.lovable.app/newsletter" }],
   }),
   component: Newsletter,
 });

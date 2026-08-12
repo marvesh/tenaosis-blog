@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 import { demoPosts } from "@/data/posts";
 
-const BASE_URL = "https://cozy-cms-corner-67.lovable.app";
+const BASE_URL = "https://tenaosis-blog.lovable.app";
 
 interface SitemapEntry {
   path: string;
