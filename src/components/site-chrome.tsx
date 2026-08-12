@@ -29,7 +29,7 @@ export function SiteHeader() {
 
         <Link
           to="/"
-          className="flex min-w-0 justify-center sm:justify-start"
+          className="flex min-w-0 justify-center sm:justify-start sm:pr-6"
           onClick={() => setOpen(false)}
           aria-label="Tenaosis home"
         >
