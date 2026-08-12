@@ -10,6 +10,7 @@ export type Post = {
   slug: string;
   title: string;
   excerpt: string;
+  quote?: string;
   image: string;
   date: string;
   readingTime: string;
