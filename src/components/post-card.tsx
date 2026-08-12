@@ -1,9 +1,15 @@
 import { Link } from "@tanstack/react-router";
+import { Pencil, Trash2 } from "lucide-react";
 import type { Post } from "@/data/posts";
+import { useAdmin } from "@/lib/admin-context";
+import { useBlog } from "@/lib/blog-store";
 
 export function PostCard({ post, compact = false }: { post: Post; compact?: boolean }) {
+  const { isAdmin } = useAdmin();
+  const { deletePost } = useBlog();
+
   return (
-    <article className="group">
+    <article className="group relative">
       <Link to="/blog/$slug" params={{ slug: post.slug }} className="block">
         <img
           src={post.image}
@@ -11,12 +17,38 @@ export function PostCard({ post, compact = false }: { post: Post; compact?: bool
           loading="lazy"
           width={1280}
           height={860}
-          className={`w-full object-cover transition-opacity group-hover:opacity-90 ${
+          className={`w-full rounded-2xl object-cover transition-opacity group-hover:opacity-90 ${
             compact ? "aspect-square" : "aspect-[4/3]"
           }`}
         />
         <h3 className={`mt-3 ${compact ? "text-base" : "text-xl"}`}>{post.title}</h3>
       </Link>
+
+      {isAdmin && (
+        <div className="absolute right-2 top-2 flex gap-1.5">
+          <Link
+            to="/dashboard/post/$postId"
+            params={{ postId: post.id }}
+            aria-label={`Edit ${post.title}`}
+            title="Edit"
+            className="rounded-full bg-background/90 p-2 text-primary shadow-sm backdrop-blur transition-colors hover:bg-background"
+          >
+            <Pencil size={14} />
+          </Link>
+          <button
+            type="button"
+            aria-label={`Delete ${post.title}`}
+            title="Delete"
+            onClick={() => {
+              if (confirm(`Delete "${post.title}"?`)) deletePost(post.id);
+            }}
+            className="rounded-full bg-background/90 p-2 text-destructive shadow-sm backdrop-blur transition-colors hover:bg-background"
+          >
+            <Trash2 size={14} />
+          </button>
+        </div>
+      )}
+
       {!compact && (
         <>
           <p className="mt-1 text-sm text-muted-foreground">{post.excerpt}</p>
