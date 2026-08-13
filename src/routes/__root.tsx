@@ -14,6 +14,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { AdminProvider } from "@/lib/admin-context";
 import { BlogProvider } from "@/lib/blog-store";
+import { ReaderProvider } from "@/lib/reader-context";
 
 function NotFoundComponent() {
   return (
@@ -100,7 +101,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Karla:wght@400;500;700&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Cabin:wght@400;500;600;700&display=swap",
       },
       { rel: "icon", type: "image/png", href: "/favicon.png" },
     ],
@@ -161,6 +162,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <AdminProvider>
         <BlogProvider>
+          <ReaderProvider>
           <div className="flex min-h-screen flex-col">
             <SiteHeader />
             <main className="flex-1">
@@ -169,6 +171,7 @@ function RootComponent() {
             </main>
             <SiteFooter />
           </div>
+          </ReaderProvider>
         </BlogProvider>
       </AdminProvider>
     </QueryClientProvider>

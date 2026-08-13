@@ -41,3 +41,16 @@ export const lockAdmin = createServerFn({ method: "POST" }).handler(async () => 
   await session.clear();
   return { ok: true as const };
 });
+
+export const unlockAdminByEmail = createServerFn({ method: "POST" })
+  .inputValidator((data: { email: string }) => data)
+  .handler(async ({ data }) => {
+    const expected = process.env["ADMIN_EMAIL"];
+    const email = (data.email ?? "").trim().toLowerCase();
+    if (!expected || !email) return { ok: false as const };
+    if (!matches(email, expected.trim().toLowerCase())) return { ok: false as const };
+
+    const session = await useSession<GateSession>(config());
+    await session.update({ unlocked: true });
+    return { ok: true as const };
+  });
