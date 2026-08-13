@@ -62,6 +62,9 @@ function Article() {
   const { publishedPosts } = useBlog();
   const post = publishedPosts.find((p) => p.slug === slug);
   const more = publishedPosts.filter((p) => p.slug !== slug).slice(0, 3);
+  const { hasAccess } = useReader();
+  const { isAdmin } = useAdmin();
+  const unlocked = hasAccess || isAdmin;
 
   if (!post) {
     return (
