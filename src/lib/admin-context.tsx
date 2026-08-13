@@ -1,11 +1,12 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
-import { getAdminStatus, lockAdmin, unlockAdmin } from "@/lib/gate.functions";
+import { getAdminStatus, lockAdmin, unlockAdmin, unlockAdminByEmail } from "@/lib/gate.functions";
 
 type AdminStore = {
   isAdmin: boolean;
   ready: boolean;
   signIn: (password: string) => Promise<boolean>;
+  signInWithEmail: (email: string) => Promise<boolean>;
   signOut: () => Promise<void>;
 };
 
@@ -36,12 +37,25 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     return res.ok;
   }, []);
 
+  const signInWithEmail = useCallback(async (email: string) => {
+    try {
+      const res = await unlockAdminByEmail({ data: { email } });
+      if (res.ok) setIsAdmin(true);
+      return res.ok;
+    } catch {
+      return false;
+    }
+  }, []);
+
   const signOut = useCallback(async () => {
     await lockAdmin();
     setIsAdmin(false);
   }, []);
 
-  const value = useMemo(() => ({ isAdmin, ready, signIn, signOut }), [isAdmin, ready, signIn, signOut]);
+  const value = useMemo(
+    () => ({ isAdmin, ready, signIn, signInWithEmail, signOut }),
+    [isAdmin, ready, signIn, signInWithEmail, signOut],
+  );
   return <AdminContext.Provider value={value}>{children}</AdminContext.Provider>;
 }
 
