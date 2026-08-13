@@ -1,5 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PostCard } from "@/components/post-card";
+import { EmailGate } from "@/components/email-gate";
+import { useAdmin } from "@/lib/admin-context";
+import { useReader } from "@/lib/reader-context";
 import { useBlog } from "@/lib/blog-store";
 import { demoPosts } from "@/data/posts";
 
@@ -88,16 +91,17 @@ function Article() {
             className="mt-5 aspect-[16/10] w-full rounded-2xl object-cover"
           />
         )}
-        {post.quote && (
+        {post.quote && unlocked && (
           <blockquote className="mt-6 rounded-2xl border-l-4 border-primary bg-secondary/60 px-5 py-4 font-display text-xl text-primary">
             {post.quote}
           </blockquote>
         )}
         <div className="prose-editorial mt-6 text-[0.95rem] text-foreground/90">
-          {post.body.map((para, i) => (
+          {(unlocked ? post.body : post.body.slice(0, 1)).map((para, i) => (
             <p key={i}>{para}</p>
           ))}
         </div>
+        {!unlocked && <EmailGate />}
       </article>
 
       <section className="mt-14 border-t border-border pt-8">
