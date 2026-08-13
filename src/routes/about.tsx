@@ -1,5 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import aboutImage from "@/assets/about-balance.jpg";
+import { useAdmin } from "@/lib/admin-context";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -54,6 +57,77 @@ function About() {
         </p>
         <p className="font-display text-2xl text-primary">Reclaim your rhythm.</p>
       </div>
+
+      <EditorAccess />
+    </div>
+  );
+}
+
+function EditorAccess() {
+  const { isAdmin, signInWithEmail } = useAdmin();
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState(false);
+  const [busy, setBusy] = useState(false);
+
+  if (isAdmin) {
+    return (
+      <p className="mt-12 border-t border-border pt-6 text-sm text-muted-foreground">
+        You're signed in as the editor.{" "}
+        <button
+          type="button"
+          onClick={() => void navigate({ to: "/dashboard" })}
+          className="text-primary underline underline-offset-4"
+        >
+          Open your dashboard
+        </button>
+      </p>
+    );
+  }
+
+  return (
+    <div className="mt-12 border-t border-border pt-6">
+      <p className="label-caps text-muted-foreground">Editor</p>
+      <p className="mt-2 text-sm text-muted-foreground">
+        If this journal is yours, enter your email to unlock the editor tools.
+      </p>
+      <form
+        onSubmit={async (e) => {
+          e.preventDefault();
+          const value = email.trim().toLowerCase();
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+            setError(true);
+            return;
+          }
+          setBusy(true);
+          const ok = await signInWithEmail(value);
+          setBusy(false);
+          setEmail("");
+          if (ok) void navigate({ to: "/dashboard" });
+          else setError(true);
+        }}
+        className="mt-4 grid max-w-sm grid-cols-[minmax(0,1fr)_auto] gap-2"
+      >
+        <input
+          type="email"
+          required
+          maxLength={255}
+          value={email}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            setError(false);
+          }}
+          placeholder="Editor email"
+          aria-label="Editor email"
+          className="input-soft min-w-0"
+        />
+        <button type="submit" disabled={busy} className="pill shrink-0 disabled:opacity-60">
+          {busy ? "Checking" : "Unlock"}
+        </button>
+      </form>
+      {error && (
+        <p className="mt-3 text-sm text-destructive">That email doesn't have editor access.</p>
+      )}
     </div>
   );
 }
