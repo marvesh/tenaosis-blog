@@ -52,7 +52,7 @@ function Dashboard() {
       <section className="mt-10">
         <h2 className="text-2xl">Featured right now</h2>
         {featuredPost ? (
-          <div className="mt-4 grid gap-4 rounded-2xl border border-border bg-card p-4 sm:grid-cols-[200px_minmax(0,1fr)]">
+          <div className="mt-4 grid gap-4 rounded-xl border border-border bg-card p-4 sm:grid-cols-[200px_minmax(0,1fr)]">
             {featuredPost.image && (
               <img
                 src={featuredPost.image}
@@ -92,7 +92,7 @@ function Dashboard() {
           {posts.map((post) => (
             <li
               key={post.id}
-              className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-2xl border border-border bg-card p-3"
+              className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-xl border border-border bg-card p-3"
             >
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold text-foreground">{post.title}</p>
@@ -164,7 +164,7 @@ function Dashboard() {
 
 function Stat({ icon, label, value }: { icon: React.ReactNode; label: string; value: number }) {
   return (
-    <div className="rounded-2xl border border-border bg-card p-4">
+    <div className="rounded-xl border border-border bg-card p-4">
       <span className="flex items-center gap-2 label-caps text-muted-foreground">
         {icon} {label}
       </span>

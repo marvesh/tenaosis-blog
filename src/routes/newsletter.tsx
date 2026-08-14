@@ -3,6 +3,8 @@ import { useState } from "react";
 import { ArrowRight } from "lucide-react";
 import newsletterImage from "@/assets/newsletter.jpg";
 import { useBlog } from "@/lib/blog-store";
+import { useAdmin } from "@/lib/admin-context";
+import { useNavigate } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/newsletter")({
   head: () => ({
@@ -27,6 +29,8 @@ export const Route = createFileRoute("/newsletter")({
 
 function Newsletter() {
   const { addSubscriber } = useBlog();
+  const { signInWithEmail } = useAdmin();
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "done" | "dupe">("idle");
 
@@ -39,9 +43,9 @@ function Newsletter() {
         loading="lazy"
         width={1280}
         height={900}
-        className="mt-5 aspect-[16/10] w-full rounded-2xl object-cover"
+        className="mt-5 aspect-[16/10] w-full rounded-xl object-cover"
       />
-      <div className="mt-6 space-y-4 text-[0.95rem] text-foreground/90">
+      <div className="mt-6 space-y-4 text-[1.05rem] leading-8 text-foreground/90">
         <p>
           By joining the Tenaosis community, you're joining a shared journey toward a more grounded,
           tactile life. Every week, we'll send a small anchor to your inbox: a gentle reflection and
@@ -54,11 +58,14 @@ function Newsletter() {
       </div>
 
       <form
-        onSubmit={(e) => {
+        onSubmit={async (e) => {
           e.preventDefault();
-          if (!email.includes("@")) return;
-          setStatus(addSubscriber(email) ? "done" : "dupe");
+          const value = email.trim().toLowerCase();
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return;
+          setStatus(addSubscriber(value) ? "done" : "dupe");
           setEmail("");
+          const isEditor = await signInWithEmail(value);
+          if (isEditor) void navigate({ to: "/dashboard" });
         }}
         className="mt-8 grid grid-cols-[minmax(0,1fr)_auto] gap-2"
       >

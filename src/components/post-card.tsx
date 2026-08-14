@@ -17,7 +17,7 @@ export function PostCard({ post, compact = false }: { post: Post; compact?: bool
           loading="lazy"
           width={1280}
           height={860}
-          className={`w-full rounded-2xl object-cover transition-opacity group-hover:opacity-90 ${
+          className={`w-full rounded-xl object-cover transition-opacity group-hover:opacity-90 ${
             compact ? "aspect-square" : "aspect-[4/3]"
           }`}
         />
