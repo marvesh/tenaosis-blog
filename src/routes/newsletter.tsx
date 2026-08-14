@@ -3,6 +3,8 @@ import { useState } from "react";
 import { ArrowRight } from "lucide-react";
 import newsletterImage from "@/assets/newsletter.jpg";
 import { useBlog } from "@/lib/blog-store";
+import { useAdmin } from "@/lib/admin-context";
+import { useNavigate } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/newsletter")({
   head: () => ({
@@ -27,6 +29,8 @@ export const Route = createFileRoute("/newsletter")({
 
 function Newsletter() {
   const { addSubscriber } = useBlog();
+  const { signInWithEmail } = useAdmin();
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "done" | "dupe">("idle");
 
@@ -54,11 +58,14 @@ function Newsletter() {
       </div>
 
       <form
-        onSubmit={(e) => {
+        onSubmit={async (e) => {
           e.preventDefault();
-          if (!email.includes("@")) return;
-          setStatus(addSubscriber(email) ? "done" : "dupe");
+          const value = email.trim().toLowerCase();
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return;
+          setStatus(addSubscriber(value) ? "done" : "dupe");
           setEmail("");
+          const isEditor = await signInWithEmail(value);
+          if (isEditor) void navigate({ to: "/dashboard" });
         }}
         className="mt-8 grid grid-cols-[minmax(0,1fr)_auto] gap-2"
       >
