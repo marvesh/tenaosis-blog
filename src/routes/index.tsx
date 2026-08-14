@@ -56,9 +56,20 @@ function Home() {
               <p key={i}>{para}</p>
             ))}
           </div>
-          <Link to="/blog/$slug" params={{ slug: featuredPost.slug }} className="pill mt-2">
-            Continue reading →
-          </Link>
+          <button
+            type="button"
+            className="pill mt-2"
+            onClick={() => {
+              const url = `${window.location.origin}/blog/${featuredPost.slug}`;
+              if (navigator.share) {
+                void navigator.share({ title: featuredPost.title, url });
+              } else {
+                void navigator.clipboard.writeText(url);
+              }
+            }}
+          >
+            Share <Share2 size={12} />
+          </button>
         </section>
       )}
 
