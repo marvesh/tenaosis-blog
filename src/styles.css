@@ -131,7 +131,7 @@
   h4 {
     font-family: var(--font-display);
     color: var(--color-primary);
-    font-weight: 600;
+    font-weight: 400;
     line-height: 1.15;
   }
 }
