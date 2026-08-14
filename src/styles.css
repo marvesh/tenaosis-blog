@@ -45,7 +45,7 @@
 }
 
 :root {
-  --radius: 0.9rem;
+  --radius: 0.55rem;
   /* warm paper cream */
   --background: oklch(0.968 0.014 92);
   --foreground: oklch(0.28 0.02 60);
@@ -120,7 +120,7 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
-    font-size: 0.9375rem;
+    font-size: 1rem;
     line-height: 1.7;
     -webkit-font-smoothing: antialiased;
   }
@@ -179,7 +179,7 @@
   width: 100%;
   border: 1px solid var(--color-input);
   background: var(--color-background);
-  border-radius: 0.9rem;
+  border-radius: 0.6rem;
   padding: 0.55rem 0.9rem;
   font-size: 0.875rem;
   outline: none;
