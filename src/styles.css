@@ -147,8 +147,8 @@
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  background: var(--color-primary);
-  color: var(--color-primary-foreground);
+  background: var(--color-pill);
+  color: var(--color-pill-foreground);
   padding: 0.3rem 0.7rem;
   font-size: 0.625rem;
   letter-spacing: 0.14em;
