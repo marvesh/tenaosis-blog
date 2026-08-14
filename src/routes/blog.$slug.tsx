@@ -84,8 +84,8 @@ function Article() {
             src={post.image}
             alt={post.title}
             width={1280}
-            height={860}
-            className="mt-5 aspect-[16/10] w-full rounded-xl object-cover"
+            height={720}
+            className="mx-auto mt-5 aspect-video w-full max-w-3xl rounded-xl object-cover"
           />
         )}
         {post.quote && (

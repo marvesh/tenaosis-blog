@@ -48,8 +48,8 @@ function Home() {
             src={featuredPost.image}
             alt={featuredPost.title}
             width={1280}
-            height={860}
-            className="mt-5 aspect-[16/10] w-full rounded-xl object-cover"
+            height={720}
+            className="mx-auto mt-5 aspect-video w-full max-w-4xl rounded-xl object-cover"
           />
           <div className="mx-auto mt-6 max-w-2xl prose-editorial text-[1.05rem] leading-8 text-foreground/90">
             {featuredPost.body.slice(0, 4).map((para, i) => (
