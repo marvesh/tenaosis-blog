@@ -119,7 +119,7 @@ function PostEditor() {
                 <img
                   src={draft.image}
                   alt="Cover preview"
-                  className="aspect-[16/10] w-full rounded-2xl object-cover"
+                  className="aspect-[16/10] w-full rounded-xl object-cover"
                 />
                 <button
                   type="button"

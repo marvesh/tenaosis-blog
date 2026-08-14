@@ -18,7 +18,7 @@ export function EmailGate({
   const [error, setError] = useState(false);
 
   return (
-    <div className="mt-8 rounded-2xl border border-border bg-secondary/50 px-5 py-6 text-center sm:px-8">
+    <div className="mt-8 rounded-xl border border-border bg-secondary/50 px-5 py-6 text-center sm:px-8">
       <h2 className="text-2xl">{title}</h2>
       <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">{blurb}</p>
       <form

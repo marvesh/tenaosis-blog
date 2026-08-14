@@ -91,15 +91,15 @@ function Article() {
             alt={post.title}
             width={1280}
             height={860}
-            className="mt-5 aspect-[16/10] w-full rounded-2xl object-cover"
+            className="mt-5 aspect-[16/10] w-full rounded-xl object-cover"
           />
         )}
         {post.quote && unlocked && (
-          <blockquote className="mt-6 rounded-2xl border-l-4 border-primary bg-secondary/60 px-5 py-4 font-display text-xl text-primary">
+          <blockquote className="mt-6 rounded-xl border-l-4 border-primary bg-secondary/60 px-5 py-4 font-display text-xl text-primary">
             {post.quote}
           </blockquote>
         )}
-        <div className="prose-editorial mt-6 text-[0.95rem] text-foreground/90">
+        <div className="prose-editorial mt-6 text-[1.05rem] leading-8 text-foreground/90">
           {(unlocked ? post.body : post.body.slice(0, 1)).map((para, i) => (
             <p key={i}>{para}</p>
           ))}

@@ -49,9 +49,9 @@ function Home() {
             alt={featuredPost.title}
             width={1280}
             height={860}
-            className="mt-5 aspect-[16/10] w-full rounded-2xl object-cover"
+            className="mt-5 aspect-[16/10] w-full rounded-xl object-cover"
           />
-          <div className="mx-auto mt-6 max-w-2xl prose-editorial text-[0.95rem] text-foreground/90">
+          <div className="mx-auto mt-6 max-w-2xl prose-editorial text-[1.05rem] leading-8 text-foreground/90">
             {featuredPost.body.slice(0, 4).map((para, i) => (
               <p key={i}>{para}</p>
             ))}

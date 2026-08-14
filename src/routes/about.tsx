@@ -35,9 +35,9 @@ function About() {
         loading="lazy"
         width={1280}
         height={900}
-        className="mt-5 aspect-[16/10] w-full rounded-2xl object-cover"
+        className="mt-5 aspect-[16/10] w-full rounded-xl object-cover"
       />
-      <div className="mt-6 space-y-4 text-[0.95rem] text-foreground/90">
+      <div className="mt-6 space-y-4 text-[1.05rem] leading-8 text-foreground/90">
         <p>
           In a world that never seems to pause, Tenaosis offers a quiet return to what is real.
         </p>

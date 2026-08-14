@@ -50,7 +50,7 @@ export function SiteHeader() {
         </button>
 
         <Link to="/" onClick={() => setOpen(false)} aria-label="Tenaosis home">
-          <Wordmark className="h-9 w-44 sm:h-12 sm:w-60" />
+          <Wordmark className="h-7 w-32 sm:h-9 sm:w-44" />
         </Link>
 
         <nav className="hidden flex-wrap items-center justify-center gap-7 sm:flex">
@@ -85,7 +85,7 @@ export function SiteHeader() {
       {open && (
         <div className="fixed inset-0 z-50 flex sm:hidden">
           <div className="flex w-[70%] max-w-xs flex-col items-center gap-5 bg-background px-6 py-14">
-            <Wordmark className="h-8 w-40" />
+            <Wordmark className="h-7 w-32" />
             {nav
               .filter((i) => i.to !== "/")
               .map((item) => (
