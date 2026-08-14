@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { Share2 } from "lucide-react";
 import { PostCard } from "@/components/post-card";
 import { useBlog } from "@/lib/blog-store";
 
