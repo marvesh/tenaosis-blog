@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Pencil, Trash2 } from "lucide-react";
+import { ChevronRight, Pencil, Trash2 } from "lucide-react";
 import type { Post } from "@/data/posts";
 import { useAdmin } from "@/lib/admin-context";
 import { useBlog } from "@/lib/blog-store";
@@ -58,7 +58,7 @@ export function PostCard({ post, compact = false }: { post: Post; compact?: bool
             className="pill mt-3"
             aria-label={`Read ${post.title}`}
           >
-            Read →
+            Read <ChevronRight size={12} />
           </Link>
         </>
       )}

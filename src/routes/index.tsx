@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { Share2 } from "lucide-react";
 import { PostCard } from "@/components/post-card";
 import { useBlog } from "@/lib/blog-store";
 
@@ -30,8 +31,8 @@ function Home() {
   return (
     <div className="mx-auto max-w-5xl px-5 py-8 sm:py-12">
       <section className="mx-auto max-w-2xl text-center">
-        <h1 className="text-3xl sm:text-4xl">Quiet living in a loud digital world</h1>
-        <p className="mt-4 text-sm leading-relaxed text-foreground/80">
+        <h1 className="sr-only">Quiet living in a loud digital world</h1>
+        <p className="text-base font-medium leading-relaxed text-foreground sm:text-lg">
           Technology isn't the villain — it's a lack of boundaries. When we prioritise the digital
           over the biological, we stop living and start becoming mechanical. Natural living is messy,
           slow and tactile; tech is clean, fast and sterile. In the balance between the two, you find
@@ -56,9 +57,20 @@ function Home() {
               <p key={i}>{para}</p>
             ))}
           </div>
-          <Link to="/blog/$slug" params={{ slug: featuredPost.slug }} className="pill mt-2">
-            Continue reading →
-          </Link>
+          <button
+            type="button"
+            className="pill mt-2"
+            onClick={() => {
+              const url = `${window.location.origin}/blog/${featuredPost.slug}`;
+              if (navigator.share) {
+                void navigator.share({ title: featuredPost.title, url });
+              } else {
+                void navigator.clipboard.writeText(url);
+              }
+            }}
+          >
+            Share <Share2 size={12} />
+          </button>
         </section>
       )}
 

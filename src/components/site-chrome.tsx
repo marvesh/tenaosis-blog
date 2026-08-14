@@ -44,7 +44,7 @@ export function SiteHeader() {
           type="button"
           aria-label={open ? "Close menu" : "Open menu"}
           onClick={() => setOpen((v) => !v)}
-          className="rounded-full border border-primary/40 p-1.5 text-primary sm:hidden"
+          className="rounded-full border border-brand-orange/60 p-1.5 text-brand-orange sm:hidden"
         >
           {open ? <X size={16} /> : <Menu size={16} />}
         </button>
@@ -93,7 +93,7 @@ export function SiteHeader() {
                   key={item.to}
                   to={item.to}
                   onClick={() => setOpen(false)}
-                  className="label-caps text-destructive"
+                  className="label-caps text-brand-orange"
                 >
                   {item.label}
                 </Link>
@@ -103,7 +103,7 @@ export function SiteHeader() {
                 <Link
                   to="/dashboard"
                   onClick={() => setOpen(false)}
-                  className="label-caps text-destructive"
+                  className="label-caps text-brand-orange"
                 >
                   Dashboard
                 </Link>
@@ -113,7 +113,7 @@ export function SiteHeader() {
                     setOpen(false);
                     void signOut();
                   }}
-                  className="label-caps text-destructive"
+                  className="label-caps text-brand-orange"
                 >
                   Exit admin
                 </button>
