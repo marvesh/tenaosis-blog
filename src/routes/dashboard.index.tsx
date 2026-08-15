@@ -66,7 +66,7 @@ function Dashboard() {
               <div className="mt-4 flex flex-wrap gap-2">
                 <Link
                   to="/dashboard/post/$slug"
-                  params={{ slug: featuredPost.id }}
+                  params={{ slug: featuredPost.slug }}
                   className="rounded-full border border-primary px-3 py-1.5 label-caps text-primary"
                 >
                   Edit
@@ -114,7 +114,7 @@ function Dashboard() {
                 </IconButton>
                 <Link
                   to="/dashboard/post/$slug"
-                  params={{ slug: post.id }}
+                  params={{ slug: post.slug }}
                   aria-label="Edit post"
                   title="Edit"
                   className="rounded-full border border-border p-1.5 text-muted-foreground hover:text-primary"
