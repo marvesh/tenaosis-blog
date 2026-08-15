@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { useAdmin } from "@/lib/admin-context";
-import logoAsset from "@/assets/tenaosis-logo.png.asset.json";
+import logoAsset from "@/assets/tenaosis-logo.svg?url";
 
 const nav = [
   { to: "/", label: "Home", exact: true },
@@ -12,8 +12,8 @@ const nav = [
 ] as const;
 
 const logoMask = {
-  WebkitMaskImage: `url(${logoAsset.url})`,
-  maskImage: `url(${logoAsset.url})`,
+  WebkitMaskImage: `url(${logoAsset})`,
+  maskImage: `url(${logoAsset})`,
   WebkitMaskRepeat: "no-repeat",
   maskRepeat: "no-repeat",
   WebkitMaskPosition: "center",
