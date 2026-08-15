@@ -18,7 +18,7 @@ export function PostCard({ post, compact = false }: { post: Post; compact?: bool
           width={1280}
           height={720}
           className={`w-full rounded-xl object-cover transition-opacity group-hover:opacity-90 ${
-            compact ? "aspect-[3/4]" : "aspect-[3/2]"
+            compact ? "aspect-[4/3] sm:aspect-[3/4]" : "aspect-[16/9] sm:aspect-[3/2]"
           }`}
         />
         <h3 className={`mt-3 ${compact ? "text-base" : "text-xl"}`}>{post.title}</h3>
