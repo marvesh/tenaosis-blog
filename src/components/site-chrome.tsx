@@ -135,7 +135,7 @@ export function SiteHeader() {
 export function SiteFooter() {
   return (
     <footer className="mt-16 border-t border-border py-8 text-center">
-      <p className="label-caps text-muted-foreground">Designed by Tenaosis</p>
+      <p className="label-caps text-muted-foreground">Designed by Desemp</p>
     </footer>
   );
 }

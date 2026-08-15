@@ -38,7 +38,7 @@ function Dashboard() {
           <span className="pill">Admin mode</span>
           <h1 className="mt-2 text-3xl sm:text-4xl">Editor's desk</h1>
         </div>
-        <Link to="/dashboard/post/$postId" params={{ postId: "new" }} className="pill">
+        <Link to="/dashboard/post/$slug" params={{ slug: "new" }} className="pill">
           <Plus size={12} /> New post
         </Link>
       </div>
@@ -65,8 +65,8 @@ function Dashboard() {
               <p className="mt-1 text-sm text-muted-foreground">{featuredPost.excerpt}</p>
               <div className="mt-4 flex flex-wrap gap-2">
                 <Link
-                  to="/dashboard/post/$postId"
-                  params={{ postId: featuredPost.id }}
+                  to="/dashboard/post/$slug"
+                  params={{ slug: featuredPost.slug }}
                   className="rounded-full border border-primary px-3 py-1.5 label-caps text-primary"
                 >
                   Edit
@@ -113,8 +113,8 @@ function Dashboard() {
                   {post.published ? <Eye size={14} /> : <EyeOff size={14} />}
                 </IconButton>
                 <Link
-                  to="/dashboard/post/$postId"
-                  params={{ postId: post.id }}
+                  to="/dashboard/post/$slug"
+                  params={{ slug: post.slug }}
                   aria-label="Edit post"
                   title="Edit"
                   className="rounded-full border border-border p-1.5 text-muted-foreground hover:text-primary"

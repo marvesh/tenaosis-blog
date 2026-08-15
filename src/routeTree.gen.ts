@@ -17,7 +17,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
-import { Route as DashboardPostPostIdRouteImport } from './routes/dashboard.post.$postId'
+import { Route as DashboardPostSlugRouteImport } from './routes/dashboard.post.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -59,9 +59,9 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
   path: '/dashboard/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DashboardPostPostIdRoute = DashboardPostPostIdRouteImport.update({
-  id: '/dashboard/post/$postId',
-  path: '/dashboard/post/$postId',
+const DashboardPostSlugRoute = DashboardPostSlugRouteImport.update({
+  id: '/dashboard/post/$slug',
+  path: '/dashboard/post/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -74,7 +74,7 @@ export interface FileRoutesByFullPath {
   '/blog/$slug': typeof BlogSlugRoute
   '/blog/': typeof BlogIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
-  '/dashboard/post/$postId': typeof DashboardPostPostIdRoute
+  '/dashboard/post/$slug': typeof DashboardPostSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -85,7 +85,7 @@ export interface FileRoutesByTo {
   '/blog/$slug': typeof BlogSlugRoute
   '/blog': typeof BlogIndexRoute
   '/dashboard': typeof DashboardIndexRoute
-  '/dashboard/post/$postId': typeof DashboardPostPostIdRoute
+  '/dashboard/post/$slug': typeof DashboardPostSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -97,7 +97,7 @@ export interface FileRoutesById {
   '/blog/$slug': typeof BlogSlugRoute
   '/blog/': typeof BlogIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
-  '/dashboard/post/$postId': typeof DashboardPostPostIdRoute
+  '/dashboard/post/$slug': typeof DashboardPostSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -110,7 +110,7 @@ export interface FileRouteTypes {
     | '/blog/$slug'
     | '/blog/'
     | '/dashboard/'
-    | '/dashboard/post/$postId'
+    | '/dashboard/post/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -121,7 +121,7 @@ export interface FileRouteTypes {
     | '/blog/$slug'
     | '/blog'
     | '/dashboard'
-    | '/dashboard/post/$postId'
+    | '/dashboard/post/$slug'
   id:
     | '__root__'
     | '/'
@@ -132,7 +132,7 @@ export interface FileRouteTypes {
     | '/blog/$slug'
     | '/blog/'
     | '/dashboard/'
-    | '/dashboard/post/$postId'
+    | '/dashboard/post/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -144,7 +144,7 @@ export interface RootRouteChildren {
   BlogSlugRoute: typeof BlogSlugRoute
   BlogIndexRoute: typeof BlogIndexRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
-  DashboardPostPostIdRoute: typeof DashboardPostPostIdRoute
+  DashboardPostSlugRoute: typeof DashboardPostSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -205,11 +205,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/dashboard/post/$postId': {
-      id: '/dashboard/post/$postId'
-      path: '/dashboard/post/$postId'
-      fullPath: '/dashboard/post/$postId'
-      preLoaderRoute: typeof DashboardPostPostIdRouteImport
+    '/dashboard/post/$slug': {
+      id: '/dashboard/post/$slug'
+      path: '/dashboard/post/$slug'
+      fullPath: '/dashboard/post/$slug'
+      preLoaderRoute: typeof DashboardPostSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -224,7 +224,7 @@ const rootRouteChildren: RootRouteChildren = {
   BlogSlugRoute: BlogSlugRoute,
   BlogIndexRoute: BlogIndexRoute,
   DashboardIndexRoute: DashboardIndexRoute,
-  DashboardPostPostIdRoute: DashboardPostPostIdRoute,
+  DashboardPostSlugRoute: DashboardPostSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

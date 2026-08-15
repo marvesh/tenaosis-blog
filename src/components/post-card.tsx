@@ -18,7 +18,7 @@ export function PostCard({ post, compact = false }: { post: Post; compact?: bool
           width={1280}
           height={720}
           className={`w-full rounded-xl object-cover transition-opacity group-hover:opacity-90 ${
-            compact ? "aspect-[3/4]" : "aspect-[3/2]"
+            compact ? "aspect-[4/3] sm:aspect-[3/4]" : "aspect-[16/9] sm:aspect-[3/2]"
           }`}
         />
         <h3 className={`mt-3 ${compact ? "text-base" : "text-xl"}`}>{post.title}</h3>
@@ -27,8 +27,8 @@ export function PostCard({ post, compact = false }: { post: Post; compact?: bool
       {isAdmin && (
         <div className="absolute right-2 top-2 flex gap-1.5">
           <Link
-            to="/dashboard/post/$postId"
-            params={{ postId: post.id }}
+            to="/dashboard/post/$slug"
+            params={{ slug: post.slug }}
             aria-label={`Edit ${post.title}`}
             title="Edit"
             className="rounded-full bg-background/90 p-2 text-primary shadow-sm backdrop-blur transition-colors hover:bg-background"
