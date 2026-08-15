@@ -27,8 +27,8 @@ export function PostCard({ post, compact = false }: { post: Post; compact?: bool
       {isAdmin && (
         <div className="absolute right-2 top-2 flex gap-1.5">
           <Link
-            to="/dashboard/post/$postId"
-            params={{ postId: post.id }}
+            to="/dashboard/post/$slug"
+            params={{ slug: post.slug }}
             aria-label={`Edit ${post.title}`}
             title="Edit"
             className="rounded-full bg-background/90 p-2 text-primary shadow-sm backdrop-blur transition-colors hover:bg-background"
