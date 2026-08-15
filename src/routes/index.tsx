@@ -41,7 +41,7 @@ function Home() {
       </section>
 
       {featuredPost && (
-        <section className="mt-12 border-t border-border pt-8">
+        <section className="mx-auto mt-12 max-w-3xl border-t border-border pt-8">
           <span className="label-caps text-muted-foreground">Featured</span>
           <h2 className="mt-2 text-3xl sm:text-5xl">{featuredPost.title}</h2>
           <p className="mt-1 text-sm text-muted-foreground">{featuredPost.excerpt}</p>
@@ -50,16 +50,16 @@ function Home() {
             alt={featuredPost.title}
             width={1280}
             height={720}
-            className="mx-auto mt-5 aspect-video w-full max-w-4xl rounded-xl object-cover"
+            className="mt-5 aspect-video w-full rounded-xl object-cover"
           />
-          <div className="mx-auto mt-6 max-w-2xl prose-editorial text-[1.05rem] leading-8 text-foreground/90">
+          <div className="prose-editorial mt-6 text-[1.05rem] leading-8 text-foreground/90">
             {featuredPost.body.slice(0, 4).map((para, i) => (
               <p key={i}>{para}</p>
             ))}
           </div>
           <button
             type="button"
-            className="pill mt-2"
+            className="pill mt-4"
             onClick={() => {
               const url = `${window.location.origin}/blog/${featuredPost.slug}`;
               if (navigator.share) {
