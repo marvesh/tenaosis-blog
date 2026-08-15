@@ -5,7 +5,7 @@ import { useAdmin } from "@/lib/admin-context";
 import { useBlog, slugify } from "@/lib/blog-store";
 import type { Post } from "@/data/posts";
 
-export const Route = createFileRoute("/dashboard/post/$postId")({
+export const Route = createFileRoute("/dashboard/post/$slug")({
   head: () => ({
     meta: [
       { title: "Compose a post — Tenaosis" },
@@ -33,14 +33,17 @@ const blankPost = (): Post => ({
 });
 
 function PostEditor() {
-  const { postId } = Route.useParams();
+  const { slug } = Route.useParams();
   const { isAdmin, ready } = useAdmin();
   const navigate = useNavigate();
   const { posts, savePost, deletePost } = useBlog();
 
-  const existing = useMemo(() => posts.find((p) => p.id === postId), [posts, postId]);
+  const existing = useMemo(
+    () => posts.find((p) => p.slug === slug) ?? posts.find((p) => p.id === slug),
+    [posts, slug],
+  );
   const [draft, setDraft] = useState<Post>(() => existing ?? blankPost());
-  const [loaded, setLoaded] = useState(Boolean(existing) || postId === "new");
+  const [loaded, setLoaded] = useState(Boolean(existing) || slug === "new");
 
   useEffect(() => {
     if (!loaded && existing) {
@@ -55,7 +58,7 @@ function PostEditor() {
 
   if (!ready || !isAdmin) return null;
 
-  const isNew = postId === "new" || !existing;
+  const isNew = slug === "new" || !existing;
 
   const onImage = (file: File | undefined) => {
     if (!file) return;
