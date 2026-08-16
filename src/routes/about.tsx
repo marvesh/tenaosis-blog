@@ -67,6 +67,7 @@ function EditorAccess() {
   const { isAdmin, signInWithEmail } = useAdmin();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
   const [busy, setBusy] = useState(false);
 
@@ -89,24 +90,29 @@ function EditorAccess() {
     <div className="mt-12 border-t border-border pt-6">
       <p className="label-caps text-muted-foreground">Editor</p>
       <p className="mt-2 text-sm text-muted-foreground">
-        If this journal is yours, enter your email to unlock the editor tools.
+        If this journal is yours, enter your email and password to unlock the editor tools.
       </p>
       <form
         onSubmit={async (e) => {
           e.preventDefault();
           const value = email.trim().toLowerCase();
-          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+          const pass = password.trim();
+
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) || !pass) {
             setError(true);
             return;
           }
+
           setBusy(true);
-          const ok = await signInWithEmail(value);
+          const ok = await signInWithEmail(value, pass);
           setBusy(false);
           setEmail("");
+          setPassword("");
+
           if (ok) void navigate({ to: "/dashboard" });
           else setError(true);
         }}
-        className="mt-4 grid max-w-sm grid-cols-[minmax(0,1fr)_auto] gap-2"
+        className="mt-4 grid max-w-sm gap-2"
       >
         <input
           type="email"
@@ -121,12 +127,27 @@ function EditorAccess() {
           aria-label="Editor email"
           className="input-soft min-w-0"
         />
+        <input
+          type="password"
+          required
+          minLength={6}
+          value={password}
+          onChange={(e) => {
+            setPassword(e.target.value);
+            setError(false);
+          }}
+          placeholder="Password"
+          aria-label="Editor password"
+          className="input-soft min-w-0"
+        />
         <button type="submit" disabled={busy} className="pill shrink-0 disabled:opacity-60">
           {busy ? "Checking" : "Unlock"}
         </button>
       </form>
       {error && (
-        <p className="mt-3 text-sm text-destructive">That email doesn't have editor access.</p>
+        <p className="mt-3 text-sm text-destructive">
+          That email or password doesn't have editor access.
+        </p>
       )}
     </div>
   );

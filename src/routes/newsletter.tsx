@@ -93,8 +93,8 @@ function Newsletter() {
 
       <p className="mt-8 text-sm text-muted-foreground">
         For any enquiry or feedback:{" "}
-        <a href="mailto:hello@tenaosis.com" className="text-primary underline underline-offset-4">
-          hello@tenaosis.com
+        <a href="mailto:mailtenaosis@gmail.com" className="text-primary underline underline-offset-4">
+          mailtenaosis@gmail.com
         </a>
       </p>
     </div>
