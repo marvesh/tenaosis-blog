@@ -112,7 +112,7 @@ function EditorAccess() {
           if (ok) void navigate({ to: "/dashboard" });
           else setError(true);
         }}
-        className="mt-4 grid max-w-sm gap-2"
+        className="mt-4 flex max-w-xl flex-col gap-2 sm:flex-row sm:items-center"
       >
         <input
           type="email"
@@ -125,7 +125,7 @@ function EditorAccess() {
           }}
           placeholder="Editor email"
           aria-label="Editor email"
-          className="input-soft min-w-0"
+          className="input-soft min-w-0 flex-1"
         />
         <input
           type="password"
@@ -138,7 +138,7 @@ function EditorAccess() {
           }}
           placeholder="Password"
           aria-label="Editor password"
-          className="input-soft min-w-0"
+          className="input-soft min-w-0 w-40 sm:w-44"
         />
         <button type="submit" disabled={busy} className="pill shrink-0 disabled:opacity-60">
           {busy ? "Checking" : "Unlock"}
