@@ -17,6 +17,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
+import { Route as ApiProxySplatRouteImport } from './routes/api.proxy.$'
 import { Route as DashboardPostSlugRouteImport } from './routes/dashboard.post.$slug'
 
 const IndexRoute = IndexRouteImport.update({
@@ -59,6 +60,11 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
   path: '/dashboard/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiProxySplatRoute = ApiProxySplatRouteImport.update({
+  id: '/api/proxy/$',
+  path: '/api/proxy/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardPostSlugRoute = DashboardPostSlugRouteImport.update({
   id: '/dashboard/post/$slug',
   path: '/dashboard/post/$slug',
@@ -74,6 +80,7 @@ export interface FileRoutesByFullPath {
   '/blog/$slug': typeof BlogSlugRoute
   '/blog/': typeof BlogIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/api/proxy/$': typeof ApiProxySplatRoute
   '/dashboard/post/$slug': typeof DashboardPostSlugRoute
 }
 export interface FileRoutesByTo {
@@ -85,6 +92,7 @@ export interface FileRoutesByTo {
   '/blog/$slug': typeof BlogSlugRoute
   '/blog': typeof BlogIndexRoute
   '/dashboard': typeof DashboardIndexRoute
+  '/api/proxy/$': typeof ApiProxySplatRoute
   '/dashboard/post/$slug': typeof DashboardPostSlugRoute
 }
 export interface FileRoutesById {
@@ -97,6 +105,7 @@ export interface FileRoutesById {
   '/blog/$slug': typeof BlogSlugRoute
   '/blog/': typeof BlogIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/api/proxy/$': typeof ApiProxySplatRoute
   '/dashboard/post/$slug': typeof DashboardPostSlugRoute
 }
 export interface FileRouteTypes {
@@ -110,6 +119,7 @@ export interface FileRouteTypes {
     | '/blog/$slug'
     | '/blog/'
     | '/dashboard/'
+    | '/api/proxy/$'
     | '/dashboard/post/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -121,6 +131,7 @@ export interface FileRouteTypes {
     | '/blog/$slug'
     | '/blog'
     | '/dashboard'
+    | '/api/proxy/$'
     | '/dashboard/post/$slug'
   id:
     | '__root__'
@@ -132,6 +143,7 @@ export interface FileRouteTypes {
     | '/blog/$slug'
     | '/blog/'
     | '/dashboard/'
+    | '/api/proxy/$'
     | '/dashboard/post/$slug'
   fileRoutesById: FileRoutesById
 }
@@ -144,6 +156,7 @@ export interface RootRouteChildren {
   BlogSlugRoute: typeof BlogSlugRoute
   BlogIndexRoute: typeof BlogIndexRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
+  ApiProxySplatRoute: typeof ApiProxySplatRoute
   DashboardPostSlugRoute: typeof DashboardPostSlugRoute
 }
 
@@ -205,6 +218,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/proxy/$': {
+      id: '/api/proxy/$'
+      path: '/api/proxy/$'
+      fullPath: '/api/proxy/$'
+      preLoaderRoute: typeof ApiProxySplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard/post/$slug': {
       id: '/dashboard/post/$slug'
       path: '/dashboard/post/$slug'
@@ -224,6 +244,7 @@ const rootRouteChildren: RootRouteChildren = {
   BlogSlugRoute: BlogSlugRoute,
   BlogIndexRoute: BlogIndexRoute,
   DashboardIndexRoute: DashboardIndexRoute,
+  ApiProxySplatRoute: ApiProxySplatRoute,
   DashboardPostSlugRoute: DashboardPostSlugRoute,
 }
 export const routeTree = rootRouteImport

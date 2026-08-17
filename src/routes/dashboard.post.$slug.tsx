@@ -1,9 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, ImagePlus, Trash2 } from "lucide-react";
 import { useAdmin } from "@/lib/admin-context";
-import { useBlog, slugify } from "@/lib/blog-store";
-import type { Post } from "@/data/posts";
+import { useBlog } from "@/lib/blog-store";
+import { createPost, updatePost, type PostInput } from "@/lib/api";
 
 export const Route = createFileRoute("/dashboard/post/$slug")({
   head: () => ({
@@ -18,124 +19,117 @@ export const Route = createFileRoute("/dashboard/post/$slug")({
   component: PostEditor,
 });
 
-const blankPost = (): Post => ({
-  id: crypto.randomUUID(),
-  slug: "",
-  title: "",
-  excerpt: "",
-  quote: "",
-  image: "",
-  date: new Date().toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }),
-  readingTime: "4 min",
-  featured: false,
-  published: false,
-  body: [],
-});
-
 function PostEditor() {
   const { slug } = Route.useParams();
   const { isAdmin, ready } = useAdmin();
   const navigate = useNavigate();
-  const { posts, savePost, deletePost } = useBlog();
+  const queryClient = useQueryClient();
+  const { posts, deletePost } = useBlog();
 
   const existing = useMemo(
     () => posts.find((p) => p.slug === slug) ?? posts.find((p) => p.id === slug),
     [posts, slug],
   );
-  const [draft, setDraft] = useState<Post>(() => existing ?? blankPost());
-  const [loaded, setLoaded] = useState(Boolean(existing) || slug === "new");
+  const isNew = slug === "new";
+
+  const [title, setTitle] = useState("");
+  const [quote, setQuote] = useState("");
+  const [excerpt, setExcerpt] = useState("");
+  const [content, setContent] = useState("");
+  const [published, setPublished] = useState(false);
+  const [image, setImage] = useState<File | null>(null);
+  const [preview, setPreview] = useState("");
+  const [hydrated, setHydrated] = useState(isNew);
 
   useEffect(() => {
-    if (!loaded && existing) {
-      setDraft(existing);
-      setLoaded(true);
+    if (!hydrated && existing) {
+      setTitle(existing.title);
+      setQuote(existing.quote ?? "");
+      setExcerpt(existing.excerpt);
+      setContent(existing.body.join("\n\n"));
+      setPublished(existing.published);
+      setPreview(existing.image);
+      setHydrated(true);
     }
-  }, [existing, loaded]);
+  }, [existing, hydrated]);
 
   useEffect(() => {
     if (ready && !isAdmin) void navigate({ to: "/admin" });
   }, [ready, isAdmin, navigate]);
 
-  if (!ready || !isAdmin) return null;
+  const save = useMutation({
+    mutationFn: async () => {
+      const payload: PostInput = {
+        title: title.trim(),
+        quote: quote.trim(),
+        sub_content: excerpt.trim(),
+        content: content.trim(),
+        blog_status: published ? "published" : "draft",
+        image,
+      };
+      if (isNew || !existing) return createPost({ ...payload, title: title.trim() });
+      return updatePost(Number(existing.id), payload);
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["posts"] });
+      void navigate({ to: "/dashboard" });
+    },
+  });
 
-  const isNew = slug === "new" || !existing;
+  if (!ready || !isAdmin) return null;
 
   const onImage = (file: File | undefined) => {
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => setDraft((d) => ({ ...d, image: String(reader.result) }));
-    reader.readAsDataURL(file);
-  };
-
-  const submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!draft.title.trim()) return;
-    savePost({
-      ...draft,
-      slug: draft.slug.trim() || slugify(draft.title),
-      body: draft.body.length ? draft.body : [draft.excerpt].filter(Boolean),
-    });
-    void navigate({ to: "/dashboard" });
+    setImage(file);
+    setPreview(URL.createObjectURL(file));
   };
 
   return (
     <div className="mx-auto max-w-3xl px-5 py-8 sm:py-12">
       <Link to="/dashboard" className="inline-flex items-center gap-1 label-caps text-muted-foreground">
-        <ArrowLeft size={12} /> Back to dashboard
+        <ArrowLeft size={13} /> Back to dashboard
       </Link>
-      <h1 className="mt-3 text-3xl sm:text-4xl">{isNew ? "Write a new post" : "Edit post"}</h1>
+      <h1 className="mt-3 text-3xl sm:text-4xl">{isNew ? "New post" : "Edit post"}</h1>
 
-      <form onSubmit={submit} className="mt-6 space-y-5">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (title.trim()) save.mutate();
+        }}
+        className="mt-6 space-y-4"
+      >
         <Field label="Title">
           <input
-            value={draft.title}
-            onChange={(e) => setDraft({ ...draft, title: e.target.value })}
-            placeholder="The invisible tether"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="A title worth pausing for"
             className="input-soft"
             required
           />
         </Field>
 
-        <Field label="Quote / excerpt">
+        <Field label="Pull quote">
           <input
-            value={draft.excerpt}
-            onChange={(e) => setDraft({ ...draft, excerpt: e.target.value })}
-            placeholder="A short line that sits under the title"
+            value={quote}
+            onChange={(e) => setQuote(e.target.value)}
+            placeholder="One line readers will remember"
             className="input-soft"
           />
         </Field>
 
-        <Field label="Pull quote (optional)">
-          <textarea
-            value={draft.quote ?? ""}
-            onChange={(e) => setDraft({ ...draft, quote: e.target.value })}
-            rows={2}
-            placeholder="A sentence to highlight inside the article"
+        <Field label="Short summary">
+          <input
+            value={excerpt}
+            onChange={(e) => setExcerpt(e.target.value)}
+            placeholder="Shown on cards and previews"
             className="input-soft"
           />
         </Field>
 
         <Field label="Cover image">
-          <div className="space-y-3">
-            {draft.image && (
-              <div className="relative">
-                <img
-                  src={draft.image}
-                  alt="Cover preview"
-                  className="aspect-[16/10] w-full rounded-xl object-cover"
-                />
-                <button
-                  type="button"
-                  onClick={() => setDraft({ ...draft, image: "" })}
-                  aria-label="Remove image"
-                  className="absolute right-3 top-3 rounded-full bg-background/90 p-2 text-destructive"
-                >
-                  <Trash2 size={14} />
-                </button>
-              </div>
-            )}
-            <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-primary px-4 py-2 label-caps text-primary">
-              <ImagePlus size={14} /> Upload image
+          <div className="flex flex-wrap items-center gap-3">
+            <label className="pill cursor-pointer">
+              <ImagePlus size={13} /> Choose image
               <input
                 type="file"
                 accept="image/*"
@@ -143,93 +137,64 @@ function PostEditor() {
                 onChange={(e) => onImage(e.target.files?.[0])}
               />
             </label>
-            <input
-              value={draft.image.startsWith("data:") ? "" : draft.image}
-              onChange={(e) => setDraft({ ...draft, image: e.target.value })}
-              placeholder="…or paste an image URL"
-              className="input-soft"
-            />
+            {preview && (
+              <img src={preview} alt="Cover preview" className="h-16 w-24 rounded-lg object-cover" />
+            )}
           </div>
         </Field>
 
         <Field label="Content">
           <textarea
-            value={draft.body.join("\n\n")}
-            onChange={(e) =>
-              setDraft({ ...draft, body: e.target.value.split(/\n{2,}/).filter(Boolean) })
-            }
-            rows={14}
-            placeholder="Write the article — separate paragraphs with a blank line."
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            rows={16}
+            placeholder="Write freely. Leave a blank line between paragraphs."
             className="input-soft"
           />
         </Field>
 
-        <div className="grid gap-3 sm:grid-cols-2">
-          <Field label="Reading time">
-            <input
-              value={draft.readingTime}
-              onChange={(e) => setDraft({ ...draft, readingTime: e.target.value })}
-              className="input-soft"
-            />
-          </Field>
-          <Field label="URL slug">
-            <input
-              value={draft.slug}
-              onChange={(e) => setDraft({ ...draft, slug: e.target.value })}
-              placeholder={slugify(draft.title) || "auto-generated"}
-              className="input-soft"
-            />
-          </Field>
-        </div>
+        <label className="flex items-center gap-2 text-sm text-foreground">
+          <input
+            type="checkbox"
+            checked={published}
+            onChange={(e) => setPublished(e.target.checked)}
+          />
+          Publish immediately
+        </label>
 
-        <div className="flex flex-wrap items-center gap-5">
-          <label className="flex items-center gap-2 text-sm text-muted-foreground">
-            <input
-              type="checkbox"
-              checked={draft.published}
-              onChange={(e) => setDraft({ ...draft, published: e.target.checked })}
-            />
-            Publish immediately
-          </label>
-          <label className="flex items-center gap-2 text-sm text-muted-foreground">
-            <input
-              type="checkbox"
-              checked={draft.featured}
-              onChange={(e) => setDraft({ ...draft, featured: e.target.checked })}
-            />
-            Feature on home
-          </label>
-        </div>
-
-        <div className="flex flex-wrap gap-3 pt-2">
-          <button type="submit" className="pill">
-            {isNew ? "Create post" : "Save changes"}
+        <div className="flex flex-wrap items-center gap-3 pt-2">
+          <button type="submit" disabled={save.isPending} className="pill disabled:opacity-60">
+            {save.isPending ? "Saving…" : "Save post"}
           </button>
-          {!isNew && (
+          {!isNew && existing && (
             <button
               type="button"
               onClick={() => {
-                if (confirm(`Delete "${draft.title}"?`)) {
-                  deletePost(draft.id);
+                if (confirm(`Delete "${existing.title}"?`)) {
+                  deletePost(existing.id);
                   void navigate({ to: "/dashboard" });
                 }
               }}
-              className="rounded-full border border-border px-4 py-1.5 label-caps text-destructive"
+              className="inline-flex items-center gap-1 rounded-full border border-border px-3 py-1.5 label-caps text-destructive"
             >
-              Delete post
+              <Trash2 size={13} /> Delete
             </button>
           )}
         </div>
       </form>
+
+      {save.isError && (
+        <p className="mt-4 text-sm text-destructive">{(save.error as Error).message}</p>
+      )}
     </div>
   );
 }
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <label className="block">
+    <div>
       <span className="label-caps text-muted-foreground">{label}</span>
       <div className="mt-1.5">{children}</div>
-    </label>
+    </div>
   );
 }
