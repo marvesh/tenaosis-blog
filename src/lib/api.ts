@@ -131,7 +131,7 @@ export const listPosts = (blogStatus?: string) =>
 export const getPost = (id: number) => api<ApiPost>(`/posts/${id}`, { auth: true });
 
 export type PostInput = {
-  title: string;
+  title?: string;
   quote?: string;
   sub_content?: string;
   content?: string;
@@ -141,7 +141,7 @@ export type PostInput = {
 
 function toFormData(input: PostInput) {
   const fd = new FormData();
-  fd.append("title", input.title);
+  if (input.title !== undefined) fd.append("title", input.title);
   if (input.quote !== undefined) fd.append("quote", input.quote);
   if (input.sub_content !== undefined) fd.append("sub_content", input.sub_content);
   if (input.content !== undefined) fd.append("content", input.content);
@@ -150,7 +150,7 @@ function toFormData(input: PostInput) {
   return fd;
 }
 
-export const createPost = (input: PostInput) =>
+export const createPost = (input: PostInput & { title: string }) =>
   api<ApiPost>("/posts/", { method: "POST", body: toFormData(input), auth: true });
 
 export const updatePost = (id: number, input: PostInput) =>
