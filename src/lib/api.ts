@@ -1,4 +1,4 @@
-export const API_URL = "https://tenaosis-fastapi-production.up.railway.app";
+export const API_URL = "/api/proxy";
 
 const TOKEN_KEY = "tenaosis.access_token";
 
