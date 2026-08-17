@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { ArrowRight } from "lucide-react";
 import newsletterImage from "@/assets/newsletter.jpg";
-import { useBlog } from "@/lib/blog-store";
-import { useAdmin } from "@/lib/admin-context";
-import { useNavigate } from "@tanstack/react-router";
+import { subscribeNewsletter } from "@/lib/api";
+
 
 export const Route = createFileRoute("/newsletter")({
   head: () => ({
