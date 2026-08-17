@@ -14,11 +14,10 @@ async function forward({ request, params }: { request: Request; params: { _splat
   headers.set("accept", request.headers.get("accept") ?? "application/json");
 
   const hasBody = !["GET", "HEAD"].includes(request.method);
-  const upstream = await fetch(target, {
-    method: request.method,
-    headers,
-    body: hasBody ? await request.arrayBuffer() : undefined,
-  });
+  const init: RequestInit = { method: request.method, headers };
+  if (hasBody) init.body = await request.arrayBuffer();
+  const upstream = await fetch(target, init);
+
 
   const body = await upstream.arrayBuffer();
   return new Response(body, {
