@@ -52,7 +52,7 @@ export async function api<T>(path: string, options: RequestOptions = {}): Promis
     payload = JSON.stringify(body);
   }
 
-  const res = await fetch(`${API_URL}${path}`, { method, headers, body: payload });
+  const res = await fetch(`${API_URL}${path}`, { method, headers, body: payload ?? null });
 
   if (res.status === 204) return undefined as T;
 
