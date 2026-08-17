@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import aboutImage from "@/assets/about-balance.jpg";
 import { useAdmin } from "@/lib/admin-context";
-
+import { useLogin } from "@/hooks/useLogin";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
@@ -70,6 +70,44 @@ function EditorAccess() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
   const [busy, setBusy] = useState(false);
+  const loginMutation = useLogin();
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+          const value = email.trim().toLowerCase();
+          const pass = password.trim();
+
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) || !pass) {
+            setError(true);
+            return;
+          }
+
+    loginMutation.mutate(
+      {
+        email,
+        password,
+      },
+      {
+        onSuccess: (data) => {
+          // Store the JWT
+          localStorage.setItem(
+            "access_token",
+            data.access_token
+          );
+
+          // Store token type if needed
+          localStorage.setItem(
+            "token_type",
+            data.token_type
+          );
+
+          // Go to admin dashboard
+          navigate({ to: "/dashboard" });
+        },
+      }
+    );
+  };
+
 
   if (isAdmin) {
     return (
@@ -92,26 +130,8 @@ function EditorAccess() {
       <p className="mt-2 text-sm text-muted-foreground">
         If this journal is yours, enter your email and password to unlock the editor tools.
       </p>
-      <form
-        onSubmit={async (e) => {
-          e.preventDefault();
-          const value = email.trim().toLowerCase();
-          const pass = password.trim();
-
-          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) || !pass) {
-            setError(true);
-            return;
-          }
-
-          setBusy(true);
-          const ok = await signInWithEmail(value, pass);
-          setBusy(false);
-          setEmail("");
-          setPassword("");
-
-          if (ok) void navigate({ to: "/dashboard" });
-          else setError(true);
-        }}
+      <form onSubmit={handleSubmit}
+       
         className="mt-4 flex max-w-xl flex-col gap-2 sm:flex-row sm:items-center"
       >
         <input
