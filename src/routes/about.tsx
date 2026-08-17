@@ -3,7 +3,6 @@ import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import aboutImage from "@/assets/about-balance.jpg";
 import { useAdmin } from "@/lib/admin-context";
-import { useLogin } from "@/hooks/useLogin";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
