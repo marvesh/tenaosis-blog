@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 const UPSTREAM = "https://tenaosis-fastapi-production.up.railway.app";
 
 async function forward({ request, params }: { request: Request; params: { _splat?: string } }) {
+  try {
   const incoming = new URL(request.url);
   const target = `${UPSTREAM}/${params._splat ?? ""}${incoming.search}`;
 
@@ -27,6 +28,12 @@ async function forward({ request, params }: { request: Request; params: { _splat
       "cache-control": "no-store",
     },
   });
+  } catch (err) {
+    return new Response(
+      JSON.stringify({ detail: err instanceof Error ? err.message : "Upstream request failed" }),
+      { status: 502, headers: { "content-type": "application/json" } },
+    );
+  }
 }
 
 export const Route = createFileRoute("/api/proxy/$")({
