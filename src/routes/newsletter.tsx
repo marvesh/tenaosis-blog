@@ -28,11 +28,12 @@ export const Route = createFileRoute("/newsletter")({
 });
 
 function Newsletter() {
-  const { addSubscriber } = useBlog();
-  const { signInWithEmail } = useAdmin();
-  const navigate = useNavigate();
   const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<"idle" | "done" | "dupe">("idle");
+  const subscribe = useMutation({
+    mutationFn: (value: string) => subscribeNewsletter(value),
+    onSuccess: () => setEmail(""),
+  });
+
 
   return (
     <div className="mx-auto max-w-2xl px-5 py-8 sm:py-12">
