@@ -1,99 +1,132 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useMemo } from "react";
 import type { ReactNode } from "react";
-import { demoPosts, type Post } from "@/data/posts";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { Post } from "@/data/posts";
+import type { ApiPost } from "@/lib/api";
+import * as apiClient from "@/lib/api";
+import { useAdmin } from "@/lib/admin-context";
+import fallbackA from "@/assets/about-balance.jpg";
+import fallbackB from "@/assets/science-of-silence.jpg";
+import fallbackC from "@/assets/notflix-and-knit.jpg";
+import fallbackD from "@/assets/sensory-poverty.jpg";
 
-const STORAGE_KEY = "tenaosis.blog.v1";
+const fallbacks = [fallbackA, fallbackB, fallbackC, fallbackD];
 
-type Subscriber = { email: string; date: string };
+export function slugify(title: string) {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
 
-type BlogState = {
+const formatDate = (iso?: string | null) =>
+  iso
+    ? new Date(iso).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" })
+    : "";
+
+const readingTime = (content: string) =>
+  `${Math.max(1, Math.round(content.split(/\s+/).filter(Boolean).length / 200))} min`;
+
+export function mapPost(post: ApiPost, index = 0): Post {
+  const content = post.content ?? "";
+  const body = content
+    .split(/\n{2,}|\r\n\r\n/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+  const base = slugify(post.title) || `post-${post.id}`;
+
+  return {
+    id: String(post.id),
+    slug: base,
+    title: post.title,
+    sub_content: post.sub_content?.trim() || "",
+    excerpt: body[0]?.slice(0, 140) || "",
+    quote: post.quote ?? "",
+    image: post.image_url || fallbacks[index % fallbacks.length]!,
+    date: formatDate(post.created_at),
+    readingTime: readingTime(content),
+    featured: false,
+    published: post.blog_status?.toLowerCase() === "published",
+    body,
+  };
+}
+
+type BlogStore = {
   posts: Post[];
-  subscribers: Subscriber[];
-};
-
-type BlogStore = BlogState & {
   publishedPosts: Post[];
   featuredPost: Post | undefined;
-  savePost: (post: Post) => void;
+  loading: boolean;
+  error: string | null;
+  postIdOf: (slugOrId: string) => number | undefined;
   deletePost: (id: string) => void;
-  toggleFeatured: (id: string) => void;
   togglePublished: (id: string) => void;
-  addSubscriber: (email: string) => boolean;
-  removeSubscriber: (email: string) => void;
+  refresh: () => void;
 };
 
 const BlogContext = createContext<BlogStore | null>(null);
 
-const initialState: BlogState = { posts: demoPosts, subscribers: [] };
-
 export function BlogProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<BlogState>(initialState);
+  const { isAdmin } = useAdmin();
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    try {
-      const raw = window.localStorage.getItem(STORAGE_KEY);
-      if (raw) setState(JSON.parse(raw) as BlogState);
-    } catch {
-      /* ignore corrupt demo data */
-    }
-  }, []);
-
-  const update = useCallback((next: (prev: BlogState) => BlogState) => {
-    setState((prev) => {
-      const value = next(prev);
+  const query = useQuery({
+    queryKey: ["posts", isAdmin ? "all" : "published"],
+    queryFn: async () => {
       try {
-        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(value));
-      } catch {
-        /* storage unavailable */
+        return await apiClient.listPosts(isAdmin ? undefined : "published");
+      } catch (err) {
+        if (err instanceof apiClient.ApiError && (err.status === 401 || err.status === 403)) {
+          return [] as ApiPost[];
+        }
+        throw err;
       }
-      return value;
-    });
-  }, []);
+    },
+    staleTime: 30_000,
+  });
+
+  const invalidate = useCallback(() => {
+    void queryClient.invalidateQueries({ queryKey: ["posts"] });
+  }, [queryClient]);
+
+  const removeMutation = useMutation({
+    mutationFn: (id: number) => apiClient.deletePost(id),
+    onSuccess: invalidate,
+  });
+
+  const statusMutation = useMutation({
+    mutationFn: ({ id, status }: { id: number; status: string }) =>
+      apiClient.updatePost(id, { title: "", blog_status: status } as apiClient.PostInput),
+    onSuccess: invalidate,
+  });
 
   const value = useMemo<BlogStore>(() => {
-    const publishedPosts = state.posts.filter((p) => p.published);
+    const posts = (query.data ?? []).map((p, i) => mapPost(p, i));
+    const publishedPosts = posts.filter((p) => p.published);
+    const featured = publishedPosts[0];
+    if (featured) featured.featured = true;
+
     return {
-      ...state,
+      posts,
       publishedPosts,
-      featuredPost: publishedPosts.find((p) => p.featured) ?? publishedPosts[0],
-      savePost: (post) =>
-        update((prev) => ({
-          ...prev,
-          posts: prev.posts.some((p) => p.id === post.id)
-            ? prev.posts.map((p) => (p.id === post.id ? post : p))
-            : [post, ...prev.posts],
-        })),
-      deletePost: (id) =>
-        update((prev) => ({ ...prev, posts: prev.posts.filter((p) => p.id !== id) })),
-      toggleFeatured: (id) =>
-        update((prev) => ({
-          ...prev,
-          posts: prev.posts.map((p) => ({ ...p, featured: p.id === id ? !p.featured : false })),
-        })),
-      togglePublished: (id) =>
-        update((prev) => ({
-          ...prev,
-          posts: prev.posts.map((p) => (p.id === id ? { ...p, published: !p.published } : p)),
-        })),
-      addSubscriber: (email) => {
-        const clean = email.trim().toLowerCase();
-        if (!clean || state.subscribers.some((s) => s.email === clean)) return false;
-        update((prev) => ({
-          ...prev,
-          subscribers: [
-            { email: clean, date: new Date().toISOString().slice(0, 10) },
-            ...prev.subscribers,
-          ],
-        }));
-        return true;
+      featuredPost: featured,
+      loading: query.isLoading,
+      error: query.error ? (query.error as Error).message : null,
+      postIdOf: (slugOrId) => {
+        const match = posts.find((p) => p.slug === slugOrId || p.id === slugOrId);
+        return match ? Number(match.id) : undefined;
       },
-      removeSubscriber: (email) =>
-        update((prev) => ({
-          ...prev,
-          subscribers: prev.subscribers.filter((s) => s.email !== email),
-        })),
+      deletePost: (id) => removeMutation.mutate(Number(id)),
+      togglePublished: (id) => {
+        const post = posts.find((p) => p.id === id);
+        if (!post) return;
+        statusMutation.mutate({
+          id: Number(id),
+          status: post.published ? "draft" : "published",
+        });
+      },
+      refresh: invalidate,
     };
-  }, [state, update]);
+  }, [query.data, query.isLoading, query.error, removeMutation, statusMutation, invalidate]);
 
   return <BlogContext.Provider value={value}>{children}</BlogContext.Provider>;
 }
@@ -102,11 +135,4 @@ export function useBlog() {
   const ctx = useContext(BlogContext);
   if (!ctx) throw new Error("useBlog must be used inside BlogProvider");
   return ctx;
-}
-
-export function slugify(title: string) {
-  return title
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
 }

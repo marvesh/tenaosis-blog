@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { ArrowRight } from "lucide-react";
 import newsletterImage from "@/assets/newsletter.jpg";
-import { useBlog } from "@/lib/blog-store";
-import { useAdmin } from "@/lib/admin-context";
-import { useNavigate } from "@tanstack/react-router";
+import { subscribeNewsletter } from "@/lib/api";
+
 
 export const Route = createFileRoute("/newsletter")({
   head: () => ({
@@ -28,11 +28,12 @@ export const Route = createFileRoute("/newsletter")({
 });
 
 function Newsletter() {
-  const { addSubscriber } = useBlog();
-  const { signInWithEmail } = useAdmin();
-  const navigate = useNavigate();
   const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<"idle" | "done" | "dupe">("idle");
+  const subscribe = useMutation({
+    mutationFn: (value: string) => subscribeNewsletter(value),
+    onSuccess: () => setEmail(""),
+  });
+
 
   return (
     <div className="mx-auto max-w-2xl px-5 py-8 sm:py-12">
@@ -58,14 +59,11 @@ function Newsletter() {
       </div>
 
       <form
-        onSubmit={async (e) => {
+        onSubmit={(e) => {
           e.preventDefault();
           const value = email.trim().toLowerCase();
           if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return;
-          setStatus(addSubscriber(value) ? "done" : "dupe");
-          setEmail("");
-          const isEditor = await signInWithEmail(value);
-          if (isEditor) void navigate({ to: "/dashboard" });
+          subscribe.mutate(value);
         }}
         className="mt-8 grid grid-cols-[minmax(0,1fr)_auto] gap-2"
       >
@@ -80,16 +78,22 @@ function Newsletter() {
         />
         <button
           type="submit"
-          className="grid shrink-0 place-items-center rounded-full bg-primary px-5 text-primary-foreground"
+          disabled={subscribe.isPending}
+          className="grid shrink-0 place-items-center rounded-full bg-primary px-5 text-primary-foreground disabled:opacity-60"
           aria-label="Subscribe"
         >
           <ArrowRight size={16} />
         </button>
       </form>
-      {status === "done" && <p className="mt-3 text-sm text-primary">You're in. Welcome to the quiet.</p>}
-      {status === "dupe" && (
-        <p className="mt-3 text-sm text-muted-foreground">That address is already on the list.</p>
+      {subscribe.isSuccess && (
+        <p className="mt-3 text-sm text-primary">You're in. Welcome to the quiet.</p>
       )}
+      {subscribe.isError && (
+        <p className="mt-3 text-sm text-muted-foreground">
+          {(subscribe.error as Error).message}
+        </p>
+      )}
+
 
       <p className="mt-8 text-sm text-muted-foreground">
         For any enquiry or feedback:{" "}

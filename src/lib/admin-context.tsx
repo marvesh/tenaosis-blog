@@ -1,28 +1,34 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
-import { getAdminStatus, lockAdmin, unlockAdmin, unlockAdminByEmail } from "@/lib/gate.functions";
+import { getMe, getToken, login, setToken, type ApiUser } from "@/lib/api";
 
 type AdminStore = {
+  user: ApiUser | null;
   isAdmin: boolean;
   ready: boolean;
-  signIn: (password: string) => Promise<boolean>;
-  signInWithEmail: (email: string) => Promise<boolean>;
-  signOut: () => Promise<void>;
+  signIn: (email: string, password: string) => Promise<{ ok: boolean; error?: string }>;
+  signOut: () => void;
 };
 
 const AdminContext = createContext<AdminStore | null>(null);
 
 export function AdminProvider({ children }: { children: ReactNode }) {
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [user, setUser] = useState<ApiUser | null>(null);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
     let active = true;
-    getAdminStatus()
-      .then((res) => {
-        if (active) setIsAdmin(res.isAdmin);
+    if (!getToken()) {
+      setReady(true);
+      return;
+    }
+    getMe()
+      .then((me) => {
+        if (active) setUser(me);
       })
-      .catch(() => undefined)
+      .catch(() => {
+        setToken(null);
+      })
       .finally(() => {
         if (active) setReady(true);
       });
@@ -31,30 +37,28 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const signIn = useCallback(async (password: string) => {
-    const res = await unlockAdmin({ data: { password } });
-    if (res.ok) setIsAdmin(true);
-    return res.ok;
-  }, []);
-
-  const signInWithEmail = useCallback(async (email: string) => {
+  const signIn = useCallback(async (email: string, password: string) => {
     try {
-      const res = await unlockAdminByEmail({ data: { email } });
-      if (res.ok) setIsAdmin(true);
-      return res.ok;
-    } catch {
-      return false;
+      const token = await login(email.trim().toLowerCase(), password);
+      setToken(token.access_token);
+      const me = await getMe();
+      setUser(me);
+      return { ok: true };
+    } catch (err) {
+      setToken(null);
+      setUser(null);
+      return { ok: false, error: err instanceof Error ? err.message : "Sign in failed" };
     }
   }, []);
 
-  const signOut = useCallback(async () => {
-    await lockAdmin();
-    setIsAdmin(false);
+  const signOut = useCallback(() => {
+    setToken(null);
+    setUser(null);
   }, []);
 
   const value = useMemo(
-    () => ({ isAdmin, ready, signIn, signInWithEmail, signOut }),
-    [isAdmin, ready, signIn, signInWithEmail, signOut],
+    () => ({ user, isAdmin: user !== null, ready, signIn, signOut }),
+    [user, ready, signIn, signOut],
   );
   return <AdminContext.Provider value={value}>{children}</AdminContext.Provider>;
 }

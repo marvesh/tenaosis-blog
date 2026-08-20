@@ -3,7 +3,6 @@ import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import aboutImage from "@/assets/about-balance.jpg";
 import { useAdmin } from "@/lib/admin-context";
-import { useLogin } from "@/hooks/useLogin";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
@@ -64,49 +63,32 @@ function About() {
 }
 
 function EditorAccess() {
-  const { isAdmin, signInWithEmail } = useAdmin();
+  const { isAdmin, signIn } = useAdmin();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
   const [busy, setBusy] = useState(false);
-  const loginMutation = useLogin();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-          const value = email.trim().toLowerCase();
-          const pass = password.trim();
+    const value = email.trim().toLowerCase();
+    const pass = password.trim();
 
-          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) || !pass) {
-            setError(true);
-            return;
-          }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) || !pass) {
+      setError(true);
+      return;
+    }
 
-    loginMutation.mutate(
-      {
-        email,
-        password,
-      },
-      {
-        onSuccess: (data) => {
-          // Store the JWT
-          localStorage.setItem(
-            "access_token",
-            data.access_token
-          );
-
-          // Store token type if needed
-          localStorage.setItem(
-            "token_type",
-            data.token_type
-          );
-
-          // Go to admin dashboard
-          navigate({ to: "/dashboard" });
-        },
-      }
-    );
+    setBusy(true);
+    setError(false);
+    const res = await signIn(value, pass);
+    setBusy(false);
+    setPassword("");
+    if (res.ok) void navigate({ to: "/dashboard" });
+    else setError(true);
   };
+
 
 
   if (isAdmin) {

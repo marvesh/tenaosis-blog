@@ -18,8 +18,9 @@ export const Route = createFileRoute("/admin")({
 function AdminGate() {
   const { signIn, isAdmin } = useAdmin();
   const navigate = useNavigate();
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   return (
@@ -28,37 +29,46 @@ function AdminGate() {
       <p className="mt-2 text-sm text-muted-foreground">
         {isAdmin
           ? "You're already signed in. Head to your dashboard."
-          : "Enter the shared editor password to open your dashboard."}
+          : "Sign in with your editor email and password."}
       </p>
       <form
         onSubmit={async (e) => {
           e.preventDefault();
           setBusy(true);
-          const ok = await signIn(password);
+          setError(null);
+          const res = await signIn(email, password);
           setBusy(false);
           setPassword("");
-          if (ok) void navigate({ to: "/dashboard" });
-          else setError(true);
+          if (res.ok) void navigate({ to: "/dashboard" });
+          else setError(res.error ?? "Invalid email or password.");
         }}
         className="mt-6 space-y-3"
       >
         <input
+          type="email"
+          required
+          autoComplete="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Email"
+          aria-label="Editor email"
+          className="input-soft"
+        />
+        <input
           type="password"
+          required
           autoComplete="current-password"
           value={password}
-          onChange={(e) => {
-            setPassword(e.target.value);
-            setError(false);
-          }}
+          onChange={(e) => setPassword(e.target.value)}
           placeholder="Password"
           aria-label="Editor password"
           className="input-soft"
         />
         <button type="submit" disabled={busy} className="pill disabled:opacity-60">
-          {busy ? "Checking…" : "Unlock"}
+          {busy ? "Checking…" : "Sign in"}
         </button>
       </form>
-      {error && <p className="mt-3 text-sm text-destructive">Incorrect password.</p>}
+      {error && <p className="mt-3 text-sm text-destructive">{error}</p>}
     </div>
   );
 }

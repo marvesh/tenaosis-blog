@@ -1,8 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect } from "react";
-import { Plus, Pencil, Trash2, Star, Eye, EyeOff, Users, FileText, Sparkles } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Plus, Pencil, Trash2, Eye, EyeOff, Mail, FileText, Sparkles } from "lucide-react";
 import { useAdmin } from "@/lib/admin-context";
 import { useBlog } from "@/lib/blog-store";
+import { createNewsletterIssue, listNewsletterIssues } from "@/lib/api";
 
 export const Route = createFileRoute("/dashboard/")({
   head: () => ({
@@ -18,14 +20,19 @@ export const Route = createFileRoute("/dashboard/")({
 });
 
 function Dashboard() {
-  const { isAdmin, ready } = useAdmin();
+  const { isAdmin, ready, user, signOut } = useAdmin();
   const navigate = useNavigate();
-  const { posts, subscribers, featuredPost, deletePost, toggleFeatured, togglePublished, removeSubscriber } =
-    useBlog();
+  const { posts, featuredPost, loading, error, deletePost, togglePublished } = useBlog();
 
   useEffect(() => {
     if (ready && !isAdmin) void navigate({ to: "/admin" });
   }, [ready, isAdmin, navigate]);
+
+  const issues = useQuery({
+    queryKey: ["newsletter-issues"],
+    queryFn: listNewsletterIssues,
+    enabled: isAdmin,
+  });
 
   if (!ready || !isAdmin) return null;
 
@@ -35,34 +42,46 @@ function Dashboard() {
     <div className="mx-auto max-w-5xl px-5 py-8 sm:py-12">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <span className="pill">Admin mode</span>
+          <span className="pill">{user?.email ?? "Admin mode"}</span>
           <h1 className="mt-2 text-3xl sm:text-4xl">Editor's desk</h1>
         </div>
-        <Link to="/dashboard/post/$slug" params={{ slug: "new" }} className="pill">
-          <Plus size={12} /> New post
-        </Link>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={signOut}
+            className="rounded-full border border-border px-3 py-1.5 label-caps text-muted-foreground"
+          >
+            Sign out
+          </button>
+          <Link to="/dashboard/post/$slug" params={{ slug: "new" }} className="pill">
+            <Plus size={12} /> New post
+          </Link>
+        </div>
       </div>
+
+      {error && <p className="mt-4 text-sm text-destructive">{error}</p>}
 
       <div className="mt-6 grid gap-4 sm:grid-cols-3">
         <Stat icon={<FileText size={16} />} label="Total posts" value={posts.length} />
         <Stat icon={<Sparkles size={16} />} label="Published" value={published.length} />
-        <Stat icon={<Users size={16} />} label="Subscribers" value={subscribers.length} />
+        <Stat icon={<Mail size={16} />} label="Letters sent" value={issues.data?.length ?? 0} />
       </div>
 
       <section className="mt-10">
-        <h2 className="text-2xl">Featured right now</h2>
-        {featuredPost ? (
+        <h2 className="text-2xl">Latest published</h2>
+        {loading && <p className="mt-3 text-sm text-muted-foreground">Loading posts…</p>}
+        {!loading && featuredPost ? (
           <div className="mt-4 grid gap-4 rounded-xl border border-border bg-card p-4 sm:grid-cols-[200px_minmax(0,1fr)]">
             {featuredPost.image && (
               <img
                 src={featuredPost.image}
                 alt={featuredPost.title}
-                className="aspect-[4/3] w-full rounded-xl object-cover"
+                className="aspect-[3/2] w-full rounded-xl object-cover"
               />
             )}
             <div className="min-w-0">
               <h3 className="text-xl">{featuredPost.title}</h3>
-              <p className="mt-1 text-sm text-muted-foreground">{featuredPost.excerpt}</p>
+              <p className="mt-1 text-sm text-muted-foreground">{featuredPost.sub_content}</p>
               <div className="mt-4 flex flex-wrap gap-2">
                 <Link
                   to="/dashboard/post/$slug"
@@ -82,13 +101,16 @@ function Dashboard() {
             </div>
           </div>
         ) : (
-          <p className="mt-3 text-sm text-muted-foreground">No featured post yet.</p>
+          !loading && <p className="mt-3 text-sm text-muted-foreground">No published post yet.</p>
         )}
       </section>
 
       <section className="mt-10">
         <h2 className="text-2xl">All posts</h2>
         <ul className="mt-4 space-y-3">
+          {posts.length === 0 && !loading && (
+            <li className="text-sm text-muted-foreground">Nothing here yet — write your first post.</li>
+          )}
           {posts.map((post) => (
             <li
               key={post.id}
@@ -97,14 +119,10 @@ function Dashboard() {
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold text-foreground">{post.title}</p>
                 <p className="label-caps text-muted-foreground">
-                  {post.published ? "Published" : "Draft"}
-                  {post.featured ? " · Featured" : ""} · {post.date}
+                  {post.published ? "Published" : "Draft"} · {post.date}
                 </p>
               </div>
               <div className="flex shrink-0 items-center gap-1">
-                <IconButton label="Feature" onClick={() => toggleFeatured(post.id)} active={post.featured}>
-                  <Star size={14} />
-                </IconButton>
                 <IconButton
                   label={post.published ? "Unpublish" : "Publish"}
                   onClick={() => togglePublished(post.id)}
@@ -136,29 +154,78 @@ function Dashboard() {
         </ul>
       </section>
 
+      <NewsletterComposer />
+
       <section className="mt-10">
-        <h2 className="text-2xl">Subscribers</h2>
+        <h2 className="text-2xl">Newsletter issues</h2>
         <ul className="mt-4 space-y-2">
-          {subscribers.length === 0 && (
-            <li className="text-sm text-muted-foreground">No subscribers yet.</li>
+          {(issues.data?.length ?? 0) === 0 && (
+            <li className="text-sm text-muted-foreground">No letters written yet.</li>
           )}
-          {subscribers.map((sub) => (
-            <li
-              key={sub.email}
-              className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-xl border border-border bg-card px-3 py-2"
-            >
-              <div className="min-w-0">
-                <p className="truncate text-sm text-foreground">{sub.email}</p>
-                <p className="label-caps text-muted-foreground">Joined {sub.date}</p>
-              </div>
-              <IconButton label="Remove" danger onClick={() => removeSubscriber(sub.email)}>
-                <Trash2 size={14} />
-              </IconButton>
+          {issues.data?.map((issue) => (
+            <li key={issue.id} className="rounded-xl border border-border bg-card px-3 py-2">
+              <p className="truncate text-sm font-semibold text-foreground">{issue.title}</p>
+              <p className="label-caps text-muted-foreground">
+                {issue.created_at ? new Date(issue.created_at).toLocaleDateString() : "Draft"}
+              </p>
             </li>
           ))}
         </ul>
       </section>
     </div>
+  );
+}
+
+function NewsletterComposer() {
+  const queryClient = useQueryClient();
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+
+  const mutation = useMutation({
+    mutationFn: () => createNewsletterIssue(title.trim(), content.trim()),
+    onSuccess: () => {
+      setTitle("");
+      setContent("");
+      void queryClient.invalidateQueries({ queryKey: ["newsletter-issues"] });
+    },
+  });
+
+  return (
+    <section className="mt-10">
+      <h2 className="text-2xl">Write a letter</h2>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (title.trim() && content.trim()) mutation.mutate();
+        }}
+        className="mt-4 space-y-3"
+      >
+        <input
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Letter title"
+          aria-label="Letter title"
+          className="input-soft"
+          required
+        />
+        <textarea
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          placeholder="What would you like to send your readers?"
+          aria-label="Letter content"
+          rows={6}
+          className="input-soft"
+          required
+        />
+        <button type="submit" disabled={mutation.isPending} className="pill disabled:opacity-60">
+          {mutation.isPending ? "Sending…" : "Send letter"}
+        </button>
+      </form>
+      {mutation.isError && (
+        <p className="mt-3 text-sm text-destructive">{(mutation.error as Error).message}</p>
+      )}
+      {mutation.isSuccess && <p className="mt-3 text-sm text-primary">Letter saved.</p>}
+    </section>
   );
 }
 
