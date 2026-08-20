@@ -81,7 +81,7 @@ function Dashboard() {
             )}
             <div className="min-w-0">
               <h3 className="text-xl">{featuredPost.title}</h3>
-              <p className="mt-1 text-sm text-muted-foreground">{featuredPost.excerpt}</p>
+              <p className="mt-1 text-sm text-muted-foreground">{featuredPost.sub_content ? featuredPost.sub_content : featuredPost.excerpt}</p>
               <div className="mt-4 flex flex-wrap gap-2">
                 <Link
                   to="/dashboard/post/$slug"

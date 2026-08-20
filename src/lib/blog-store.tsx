@@ -39,6 +39,7 @@ export function mapPost(post: ApiPost, index = 0): Post {
     id: String(post.id),
     slug: base,
     title: post.title,
+    sub_content: post.sub_content?.trim() || "",
     excerpt: post.sub_content?.trim() || body[0]?.slice(0, 140) || "",
     quote: post.quote ?? "",
     image: post.image_url || fallbacks[index % fallbacks.length]!,

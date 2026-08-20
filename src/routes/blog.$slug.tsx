@@ -37,6 +37,7 @@ interface FrontendPost {
   blog_status: string;
   owner_id: number;
   owner?: any;
+  sub_content?: string;
 }
 
 const slugify = (text: string) =>
@@ -282,7 +283,7 @@ function Article() {
             {more.map((post) => (
               <PostCard
                 key={post.id}
-                post={{ ...post, id: String(post.id), image: post.image  ?? "" }}
+                post={{ ...post, id: String(post.id), image: post.image  ?? "", sub_content: post.sub_content ?? post.excerpt }}
                 compact
               />
             ))}
