@@ -76,7 +76,7 @@ export async function api<T>(path: string, options: RequestOptions = {}): Promis
   return data as T;
 }
 
-/* ---------- types mirrored from the FastAPI schema ---------- */
+
 
 export type ApiUser = {
   id: number;
@@ -151,7 +151,7 @@ function toFormData(input: PostInput) {
 }
 
 export const createPost = (input: PostInput & { title: string }) =>
-  api<ApiPost>("/posts/", { method: "POST", body: toFormData(input), auth: true });
+  api<ApiPost>("/posts", { method: "POST", body: toFormData(input), auth: true });
 
 export const updatePost = (id: number, input: PostInput) =>
   api<ApiPost>(`/posts/${id}`, { method: "PATCH", body: toFormData(input), auth: true });
