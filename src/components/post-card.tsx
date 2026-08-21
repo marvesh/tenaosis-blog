@@ -51,7 +51,7 @@ export function PostCard({ post, compact = false }: { post: Post; compact?: bool
 
       {!compact && (
         <>
-          <p className="mt-1 text-sm text-muted-foreground">{post.excerpt}</p>
+          <p className="mt-1 text-sm text-muted-foreground">{post.sub_content || post.excerpt}</p>
           <Link
             to="/blog/$slug"
             params={{ slug: post.slug }}

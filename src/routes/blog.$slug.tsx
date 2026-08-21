@@ -23,7 +23,8 @@ interface BackendPost {
 interface FrontendPost {
   id: number;
   title: string;
-  excerpt: string;
+  sub_content?: string;
+  excerpt?: string;
   quote?: string;
   body: string[];
   image?: string;
@@ -37,7 +38,6 @@ interface FrontendPost {
   blog_status: string;
   owner_id: number;
   owner?: any;
-  sub_content?: string;
 }
 
 const slugify = (text: string) =>
@@ -64,11 +64,13 @@ const formatDate = (date: string) => {
 
 const transformPost = (post: BackendPost): FrontendPost => {
   const content = post.content ?? "";
+  const subContent = post.sub_content?.trim() ?? "";
 
   return {
     id: post.id,
     title: post.title,
-    excerpt: post.sub_content ?? "",
+    sub_content: subContent,
+    excerpt: subContent,
     ...(post.quote != null ? { quote: post.quote } : {}),
     body: content
       .split(/\n\s*\n/)
@@ -119,6 +121,7 @@ export const Route = createFileRoute("/blog/$slug")({
         .replace(/\b\w/g, (c) => c.toUpperCase());
 
     const description =
+      post?.sub_content ||
       post?.excerpt ||
       "An essay from the Tenaosis journal on living gently with technology.";
 
@@ -240,9 +243,9 @@ function Article() {
           {post.title}
         </h1>
 
-        {post.excerpt && (
+        {(post.sub_content || post.excerpt) && (
           <p className="mt-1 text-sm text-muted-foreground">
-            {post.excerpt}
+            {post.sub_content || post.excerpt}
           </p>
         )}
 
@@ -283,7 +286,13 @@ function Article() {
             {more.map((post) => (
               <PostCard
                 key={post.id}
-                post={{ ...post, id: String(post.id), image: post.image  ?? "", sub_content: post.sub_content ?? post.excerpt }}
+                post={{
+                  ...post,
+                  id: String(post.id),
+                  image: post.image ?? "",
+                  sub_content: post.sub_content ?? post.excerpt ?? "",
+                  excerpt: post.sub_content ?? post.excerpt ?? "",
+                }}
                 compact
               />
             ))}

@@ -34,7 +34,7 @@ function PostEditor() {
 
   const [title, setTitle] = useState("");
   const [quote, setQuote] = useState("");
-  const [excerpt, setExcerpt] = useState("");
+  const [subContent, setSubContent] = useState("");
   const [content, setContent] = useState("");
   const [published, setPublished] = useState(false);
   const [image, setImage] = useState<File | null>(null);
@@ -45,7 +45,7 @@ function PostEditor() {
     if (!hydrated && existing) {
       setTitle(existing.title);
       setQuote(existing.quote ?? "");
-      setExcerpt(existing.excerpt);
+      setSubContent(existing.sub_content || existing.excerpt || "");
       setContent(existing.body.join("\n\n"));
       setPublished(existing.published);
       setPreview(existing.image);
@@ -62,7 +62,7 @@ function PostEditor() {
       const payload: PostInput = {
         title: title.trim(),
         quote: quote.trim(),
-        sub_content: excerpt.trim(),
+        sub_content: subContent.trim(),
         content: content.trim(),
         blog_status: published ? "published" : "draft",
         image,
@@ -119,8 +119,8 @@ function PostEditor() {
 
         <Field label="Short summary">
           <input
-            value={excerpt}
-            onChange={(e) => setExcerpt(e.target.value)}
+            value={subContent}
+            onChange={(e) => setSubContent(e.target.value)}
             placeholder="Shown on cards and previews"
             className="input-soft"
           />

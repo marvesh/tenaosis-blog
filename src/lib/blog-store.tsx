@@ -34,13 +34,14 @@ export function mapPost(post: ApiPost, index = 0): Post {
     .map((p) => p.trim())
     .filter(Boolean);
   const base = slugify(post.title) || `post-${post.id}`;
+  const subContent = post.sub_content?.trim() || "";
 
   return {
     id: String(post.id),
     slug: base,
     title: post.title,
-    sub_content: post.sub_content?.trim() || "",
-    excerpt: body[0]?.slice(0, 140) || "",
+    sub_content: subContent,
+    excerpt: subContent,
     quote: post.quote ?? "",
     image: post.image_url || fallbacks[index % fallbacks.length]!,
     date: formatDate(post.created_at),

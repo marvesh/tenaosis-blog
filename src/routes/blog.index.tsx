@@ -28,7 +28,7 @@ function BlogIndex() {
   const { publishedPosts } = useBlog();
   const [query, setQuery] = useState("");
   const results = publishedPosts.filter((p) =>
-    (p.title + p.excerpt).toLowerCase().includes(query.trim().toLowerCase()),
+    (p.title + (p.sub_content || p.excerpt || "")).toLowerCase().includes(query.trim().toLowerCase()),
   );
 
   return (

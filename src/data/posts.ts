@@ -1,16 +1,9 @@
-import invisibleTether from "@/assets/invisible-tether.jpg";
-import scienceOfSilence from "@/assets/science-of-silence.jpg";
-import sensoryPoverty from "@/assets/sensory-poverty.jpg";
-import notflixAndKnit from "@/assets/notflix-and-knit.jpg";
-import aboutBalance from "@/assets/about-balance.jpg";
-import newsletterImg from "@/assets/newsletter.jpg";
-
 export type Post = {
   id: string;
   slug: string;
   title: string;
   sub_content: string;
-  excerpt: string;
+  excerpt?: string;
   quote?: string;
   image: string;
   date: string;
@@ -20,16 +13,8 @@ export type Post = {
   body: string[];
 };
 
-// export const postImages: Record<string, string> = {
-//   "invisible-tether": invisibleTether,
-//   "science-of-silence": scienceOfSilence,
-//   "sensory-poverty": sensoryPoverty,
-//   "notflix-and-knit": notflixAndKnit,
-//   "quiet-check-trap": aboutBalance,
-//   "digital-shadows": newsletterImg,
-// };
+export const demoPosts: Post[] = [];
 
-// export const demoPosts: Post[] = [
 //   {
 //     id: "p1",
 //     slug: "invisible-tether",

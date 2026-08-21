@@ -44,7 +44,7 @@ function Home() {
         <section className="mx-auto mt-12 max-w-3xl border-t border-border pt-8">
           <span className="label-caps text-muted-foreground">Featured</span>
           <h2 className="mt-2 text-3xl sm:text-5xl">{featuredPost.title}</h2>
-          <p className="mt-1 text-sm text-muted-foreground">{featuredPost.excerpt}</p>
+          <p className="mt-1 text-sm text-muted-foreground">{featuredPost.sub_content || featuredPost.excerpt}</p>
           <img
             src={featuredPost.image}
             alt={featuredPost.title}
