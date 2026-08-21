@@ -5,7 +5,7 @@ import { useAdmin } from "@/lib/admin-context";
 import logoAsset from "@/assets/tenaosis-logo.svg?url";
 
 const nav = [
-  { to: "/", label: "Home", exact: true },
+  { to: "/home", label: "Home", exact: true },
   { to: "/blog", label: "Blog" },
   { to: "/about", label: "About" },
   { to: "/newsletter", label: "Email" },

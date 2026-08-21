@@ -31,12 +31,12 @@ function Home() {
   return (
     <div className="mx-auto max-w-5xl px-5 py-8 sm:py-12">
       <section className="mx-auto max-w-2xl text-center">
-        <h1 className="sr-only">Quiet living in a loud digital world</h1>
         <p className="text-base font-medium leading-relaxed text-foreground sm:text-lg">
-          Technology isn't the villain — it's a lack of boundaries. When we prioritise the digital
-          over the biological, we stop living and start becoming mechanical. Natural living is messy,
-          slow and tactile; tech is clean, fast and sterile. In the balance between the two, you find
-          healthy living.
+          Technology isn't the enemy, the problem is not setting limits. 
+          When we put digital things ahead of real, human life, 
+          we stop truly living and start acting like machines. Natural life is messy, 
+          slow, and hands-on; technology is clean, fast, and sterile. 
+          Healthy living comes from balancing the two.
         </p>
       </section>
 
