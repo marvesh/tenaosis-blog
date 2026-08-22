@@ -6,16 +6,19 @@ import { useBlog } from "@/lib/blog-store";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Tenaosis — Quiet living in a loud digital world" },
+      { title: "Tenaosis — Finding the balance between technology and a natural life." },
       {
         name: "description",
-        content:
-          "Essays on attention, silence and natural rhythms. Tenaosis is a slow journal for people learning to live gently with technology.",
+        content: "Tenaosis: finding the balance between technology and a natural life.",
       },
-      { property: "og:title", content: "Tenaosis — Quiet living in a loud digital world" },
+      { property: "og:title", content: "Tenaosis — Finding the balance between technology and a natural life." },
       {
         property: "og:description",
-        content: "Essays on attention, silence and natural rhythms for a calmer digital life.",
+        content: "Tenaosis: finding the balance between technology and a natural life.",
+      },
+      {
+        name: "twitter:description",
+        content: "Tenaosis: finding the balance between technology and a natural life.",
       },
       { property: "og:url", content: "https://tenaosis-blog.vercel.app/" },
     ],
