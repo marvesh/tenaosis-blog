@@ -83,6 +83,8 @@ export function BlogProvider({ children }: { children: ReactNode }) {
       }
     },
     staleTime: 30_000,
+    retry: 3,
+    retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 10_000),
   });
 
   const invalidate = useCallback(() => {

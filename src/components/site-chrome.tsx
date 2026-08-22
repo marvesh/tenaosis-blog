@@ -5,7 +5,7 @@ import { useAdmin } from "@/lib/admin-context";
 import logoAsset from "@/assets/tenaosis-logo.svg?url";
 
 const nav = [
-  { to: "/home", label: "Home", exact: true },
+  { to: "/", label: "Home", exact: true },
   { to: "/blog", label: "Blog" },
   { to: "/about", label: "About" },
   { to: "/newsletter", label: "Email" },
@@ -86,18 +86,16 @@ export function SiteHeader() {
         <div className="fixed inset-0 z-50 flex sm:hidden">
           <div className="flex w-[70%] max-w-xs flex-col items-center gap-5 bg-background px-6 py-14">
             <Wordmark className="h-7 w-32" />
-            {nav
-              .filter((i) => i.to !== "/")
-              .map((item) => (
-                <Link
-                  key={item.to}
-                  to={item.to}
-                  onClick={() => setOpen(false)}
-                  className="label-caps text-brand-orange"
-                >
-                  {item.label}
-                </Link>
-              ))}
+            {nav.map((item) => (
+              <Link
+                key={item.to}
+                to={item.to}
+                onClick={() => setOpen(false)}
+                className="label-caps text-brand-orange"
+              >
+                {item.label}
+              </Link>
+            ))}
             {isAdmin && (
               <>
                 <Link

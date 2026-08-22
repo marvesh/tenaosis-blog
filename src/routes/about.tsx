@@ -113,8 +113,7 @@ function EditorAccess() {
         If this journal is yours, enter your email and password to unlock the editor tools.
       </p>
       <form onSubmit={handleSubmit}
-       
-        className="mt-4 flex max-w-xl flex-col gap-2 sm:flex-row sm:items-center"
+        className="mt-4 flex max-w-xl flex-row items-center gap-2"
       >
         <input
           type="email"
@@ -140,7 +139,7 @@ function EditorAccess() {
           }}
           placeholder="Password"
           aria-label="Editor password"
-          className="input-soft min-w-0 w-40 sm:w-44"
+          className="input-soft min-w-0 flex-1 sm:w-44 sm:flex-none"
         />
         <button type="submit" disabled={busy} className="pill shrink-0 disabled:opacity-60">
           {busy ? "Checking" : "Unlock"}

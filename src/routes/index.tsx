@@ -17,15 +17,15 @@ export const Route = createFileRoute("/")({
         property: "og:description",
         content: "Essays on attention, silence and natural rhythms for a calmer digital life.",
       },
-      { property: "og:url", content: "https://tenaosis-blog.lovable.app/" },
+      { property: "og:url", content: "https://tenaosis-blog.vercel.app/" },
     ],
-    links: [{ rel: "canonical", href: "https://tenaosis-blog.lovable.app/" }],
+    links: [{ rel: "canonical", href: "https://tenaosis-blog.vercel.app/" }],
   }),
   component: Home,
 });
 
 function Home() {
-  const { publishedPosts, featuredPost } = useBlog();
+  const { publishedPosts, featuredPost, loading, error } = useBlog();
   const rest = publishedPosts.filter((p) => p.id !== featuredPost?.id);
 
   return (
@@ -39,6 +39,16 @@ function Home() {
           Healthy living comes from balancing the two.
         </p>
       </section>
+
+      {loading && (
+        <p className="mt-8 text-center text-sm text-muted-foreground">Loading the journal...</p>
+      )}
+
+      {error && !loading && (
+        <p className="mt-8 text-center text-sm text-destructive">
+          The journal is temporarily unavailable. Please refresh and try again.
+        </p>
+      )}
 
       {featuredPost && (
         <section className="mx-auto mt-12 max-w-3xl border-t border-border pt-8">

@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { PostCard } from "@/components/post-card";
 
 const BASE_URL = "https://tenaosis-blog.vercel.app";
-const API_URL = `${BASE_URL}/api/proxy/posts`;
+const API_PATH = "/api/proxy/posts";
 
 interface BackendPost {
   id: number;
@@ -11,6 +11,7 @@ interface BackendPost {
   sub_content?: string | null;
   content?: string | null;
   image?: string | null;
+  image_url?: string | null;
   blog_status: string;
   owner_id: number;
   owner?: any;
@@ -62,9 +63,26 @@ const formatDate = (date: string) => {
   });
 };
 
+const resolveImageUrl = (image?: string | null) => {
+  const value = image?.trim();
+
+  if (!value) return undefined;
+
+  if (value.startsWith("data:") || value.startsWith("blob:")) {
+    return value;
+  }
+
+  try {
+    return new URL(value, `${BASE_URL}/`).toString();
+  } catch {
+    return undefined;
+  }
+};
+
 const transformPost = (post: BackendPost): FrontendPost => {
   const content = post.content ?? "";
   const subContent = post.sub_content?.trim() ?? "";
+  const image = resolveImageUrl(post.image ?? post.image_url);
 
   return {
     id: post.id,
@@ -76,7 +94,7 @@ const transformPost = (post: BackendPost): FrontendPost => {
       .split(/\n\s*\n/)
       .map((paragraph) => paragraph.trim())
       .filter(Boolean),
-    ...(post.image != null ? { image: post.image } : {}),
+    ...(image ? { image } : {}),
     date: formatDate(post.created_at),
     created_at: post.created_at,
     updated_at: post.updated_at,
@@ -92,13 +110,22 @@ const transformPost = (post: BackendPost): FrontendPost => {
 
 export const Route = createFileRoute("/blog/$slug")({
   loader: async () => {
-    const response = await fetch(`${API_URL}/?blog_status=published`);
+    const apiUrl =
+      typeof window === "undefined"
+        ? `${BASE_URL}${API_PATH}?blog_status=published`
+        : `${API_PATH}?blog_status=published`;
+    const response = await fetch(apiUrl);
 
     if (!response.ok) {
       throw new Error("Failed to load blog posts");
     }
 
-    const posts: BackendPost[] = await response.json();
+    const payload: unknown = await response.json();
+    const posts: BackendPost[] = Array.isArray(payload)
+      ? payload
+      : payload && typeof payload === "object" && "posts" in payload && Array.isArray(payload.posts)
+        ? payload.posts
+        : [];
 
     return {
       posts: posts
@@ -125,11 +152,7 @@ export const Route = createFileRoute("/blog/$slug")({
       post?.excerpt ||
       "An essay from the Tenaosis journal on living gently with technology.";
 
-    const image = post?.image
-      ? post.image.startsWith("http")
-        ? post.image
-        : `${BASE_URL}${post.image}`
-      : undefined;
+    const image = resolveImageUrl(post?.image);
 
     return {
       meta: [
